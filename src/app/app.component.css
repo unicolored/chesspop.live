@@ -1,0 +1,29 @@
+
+.header {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-controls {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info {
+  font-size: 14px;
+}
+
+.controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+}
+
+.controls input {
+  vertical-align: middle;
+}
