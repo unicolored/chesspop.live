@@ -1,5 +1,5 @@
-import * as cg from './chessfield.types';
-import { Config } from 'chessground/config';
+import * as cg from "./chessfield.types";
+import { Config } from "chessground/config";
 
 export interface ChessfieldConfig extends Config {
   fen?: cg.FEN; // chess position in Forsyth notation
@@ -29,12 +29,16 @@ export interface ChessfieldConfig extends Config {
   };
   movable?: {
     free?: boolean; // all moves are valid - board editor
-    color?: cg.Color | 'both'; // color that can move. white | black | both | undefined
+    color?: cg.Color | "both"; // color that can move. white | black | both | undefined
     dests?: cg.Dests; // valid moves. {"a2" ["a3" "a4"] "b1" ["a3" "c3"]}
     showDests?: boolean; // whether to add the move-dest class on squares
     events?: {
       after?: (orig: cg.Key, dest: cg.Key, metadata: cg.MoveMetadata) => void; // called after the move has been played
-      afterNewPiece?: (role: cg.Role, key: cg.Key, metadata: cg.MoveMetadata) => void; // called after a new piece is dropped on the board
+      afterNewPiece?: (
+        role: cg.Role,
+        key: cg.Key,
+        metadata: cg.MoveMetadata,
+      ) => void; // called after a new piece is dropped on the board
     };
     rookCastle?: boolean; // castle by moving the king to the rook
   };
@@ -45,7 +49,11 @@ export interface ChessfieldConfig extends Config {
     dests?: cg.Key[]; // premove destinations for the current selection
     customDests?: cg.Dests; // use custom valid premoves. {"a2" ["a3" "a4"] "b1" ["a3" "c3"]}
     events?: {
-      set?: (orig: cg.Key, dest: cg.Key, metadata?: cg.SetPremoveMetadata) => void; // called after the premove has been set
+      set?: (
+        orig: cg.Key,
+        dest: cg.Key,
+        metadata?: cg.SetPremoveMetadata,
+      ) => void; // called after the premove has been set
       unset?: () => void; // called after the premove has been unset
     };
   };
