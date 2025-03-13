@@ -13,7 +13,7 @@ import { isPlatformBrowser } from "@angular/common";
 })
 export class ThemeService {
   private darkMode = signal<boolean>(false);
-  isDarkMode = this.darkMode.asReadonly();
+  isDarkMode = computed<boolean>(() => this.darkMode());
 
   platformID = inject(PLATFORM_ID);
 
@@ -22,20 +22,18 @@ export class ThemeService {
 
     if (isBrowser) {
       // Check if user has a preferred theme
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
-      this.darkMode.set(prefersDark);
+      // const prefersDark = window.matchMedia(
+      //   "(prefers-color-scheme: dark)",
+      // ).matches;
+      // this.darkMode.set(prefersDark);
+
+      const darkMode = localStorage.getItem("darkMode") ?? "light";
+      this.darkMode.set(darkMode === "dark");
     }
-    console.log("this.darkMode()", this.darkMode());
-    console.log("this.isDarkMode()", this.isDarkMode());
 
     effect(() => {
       if (isBrowser) {
-        window.localStorage.setItem(
-          "darkMode",
-          this.isDarkMode() ? "dark" : "light",
-        );
+        localStorage.setItem("darkMode", this.isDarkMode() ? "dark" : "light");
       }
     });
   }

@@ -9,58 +9,6 @@ export class StreamService {
   reader: ReadableStreamDefaultReader<Uint8Array> | null = null; // Store the reader globally to control it
   isStreaming = false; // Flag to track streaming status
 
-  public listenToNdjsonStream(streamUrl: string): Observable<any> {
-    const dataSubject = new Subject<any>();
-
-    fetch(streamUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        this.reader = response.body!.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let buffer = "";
-
-        const processStream = ({
-          done,
-          value,
-        }: ReadableStreamReadResult<Uint8Array>) => {
-          if (done) {
-            dataSubject.complete();
-            return;
-          }
-
-          // Decode the chunk and append to buffer
-          buffer += decoder.decode(value, { stream: true });
-
-          // Split by newlines and process each line
-          const lines = buffer.split("\n");
-          buffer = lines.pop() || ""; // Keep incomplete line in buffer
-
-          lines.forEach((line) => {
-            if (line.trim()) {
-              // Skip empty lines
-              try {
-                const json = JSON.parse(line);
-                dataSubject.next(json); // Emit each parsed object
-              } catch (e) {
-                dataSubject.error(`JSON Parse Error: ${e}`);
-              }
-            }
-          });
-
-          // Continue reading the stream
-          this.reader?.read().then(processStream);
-        };
-
-        // Start reading
-        this.reader.read().then(processStream);
-      })
-      .catch((error) => dataSubject.error(error));
-
-    return dataSubject.asObservable();
-  }
-
   startTv(streamUrl: string): Observable<LichessTvFeed | null> {
     if (this.isStreaming) {
       return of(null);
