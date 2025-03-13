@@ -1,9 +1,13 @@
 <div class="navbar bg-base-100 shadow-sm">
   <div class="navbar-start">
-    <div aria-label="success" class="ml-2 status status-success status-lg" [class.animate-ping]="isLoading"></div>
+    <div
+      aria-label="success"
+      class="status status-success status-lg ml-2"
+      [class.animate-ping]="isLoading"
+    ></div>
   </div>
   <div class="navbar-center">
-    <a class="btn btn-ghost text-xl border-0" href="/">Chessfield 🍿 Live</a>
+    <a class="btn btn-ghost border-0 text-xl" href="/">Chessfield 🍿 Live</a>
   </div>
   <div class="navbar-end">
     <app-theme-toggle class="mr-2"></app-theme-toggle>
