@@ -1,6 +1,16 @@
-# ChessfieldLive
+# Chessfield 🍿 Live
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.2.
+__Chessfield__ is designed to display live games in a spectator interactive mode. Take a snack, enjoy!
+
+It helps online players, especially amateur like me to keep an IRL view and analysis of the chess games.
+Chessfield is currently connected to Lichess stream data only.
+
+## Thanks
+
+[Angular CLI](https://github.com/angular/angular-cli)
+Stream Reader : [browser-ndjson-stream-reader.js](https://gist.github.com/ornicar/a097406810939cf7be1df8ea30e94f3e)
+DaisyUI: https://github.com/saadeghi/daisyui
+Popcorn favicon from [favicon.io](https://favicon.io/) 
 
 ## Development server
 
