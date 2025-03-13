@@ -1,6 +1,6 @@
 {
   "name": "chessfield-live",
-  "version": "0.0.0",
+  "version": "0.3.3",
   "scripts": {
     "format": "npx prettier -w ./src",
     "prod": "ng build --configuration production --base-href \"https://unicolored.github.io/chessfield-live\"",
