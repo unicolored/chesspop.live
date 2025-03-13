@@ -3,7 +3,7 @@
   "version": "0.3.3",
   "scripts": {
     "format": "npx prettier -w ./src",
-    "prod": "ng build --configuration production --base-href \"https://unicolo.red/chessfield-live/\"",
+    "prod": "ng build --configuration production --base-href \"https://chessfield.live/\"",
     "deploy": "ngh --dir=dist/chessfield-live/browser",
     "ng": "ng",
     "start": "ng serve chessfield-live --hmr=false",
