@@ -1,7 +1,9 @@
 @import "tailwindcss";
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #ecebe8;
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, cupcake;
+  root: ":root";
+  include: ;
+  exclude: ;
+  prefix: ;
+  logs: true;
 }

@@ -17,10 +17,20 @@ export interface LichessStreamData {
   status?: Status;
   createdAt?: number;
   lastMove?: string;
-  players?: Players;
+  players?: Player[];
   wc?: number;
   bc?: number;
   lm?: string;
+}
+
+export interface Player {
+  user: {
+    title?: string;
+    name: string;
+    id: string;
+  };
+  color: string;
+  rating: number;
 }
 
 export interface Players {
@@ -34,6 +44,7 @@ export interface Black {
 }
 
 export interface BlackUser {
+  title?: string;
   name: string;
   id: string;
 }

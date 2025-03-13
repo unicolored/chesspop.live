@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable, of, Subject } from "rxjs";
-import { LichessTvFeed } from "./pages/page-live/feed.interface";
+import { LichessTvFeed } from "../pages/page-live/feed.interface";
 
 @Injectable({
   providedIn: "root",
