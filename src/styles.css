@@ -5,8 +5,8 @@
     dark --prefersdark,
     cupcake;
   root: ":root";
-  include:;
-  exclude:;
-  prefix:;
+  /*include:;*/
+  /*exclude:;*/
+  /*prefix:;*/
   logs: true;
 }
