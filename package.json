@@ -1,6 +1,6 @@
 {
   "name": "chessfield-live",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "scripts": {
     "format": "npx prettier -w ./src",
     "prod": "ng build --configuration production --base-href \"https://chessfield.live/\"",
