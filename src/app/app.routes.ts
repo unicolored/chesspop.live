@@ -5,6 +5,6 @@ export const routes: Routes = [
     path: "",
     pathMatch: "full",
     loadComponent: () =>
-      import("./pages/page-home/home.component").then((m) => m.HomeComponent),
+      import("./pages/page-live/live.component").then((m) => m.LiveComponent),
   },
 ];

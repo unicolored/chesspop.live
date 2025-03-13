@@ -1,0 +1,11 @@
+<button
+  (click)="toggleTheme()"
+  class="btn btn-ghost btn-lg btn-circle border-0"
+>
+  @if (themeService.isDarkMode()) {
+    🌝 LIGHT
+  } @else {
+      🌚 DARK
+  }
+
+</button>
