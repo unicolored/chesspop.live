@@ -2,8 +2,10 @@
   "name": "chessfield-live",
   "version": "0.4.0",
   "scripts": {
+    "eslint": "eslint src",
+    "check": "npx prettier --check ./src",
     "format": "npx prettier -w ./src",
-    "prod": "ng build --configuration production --base-href \"https://chessfield.live/\"",
+    "prod": "ng build --configuration production --base-href \"/\"",
     "deploy": "ngh --dir=dist/chessfield-live/browser",
     "ng": "ng",
     "start": "ng serve chessfield-live --hmr=false",
@@ -23,6 +25,9 @@
     "@angular/platform-server": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@angular/ssr": "^19.2.2",
+    "@fortawesome/angular-fontawesome": "^1.0.0",
+    "@fortawesome/duotone-regular-svg-icons": "^6.7.1",
+    "@fortawesome/sharp-duotone-solid-svg-icons": "^6.7.1",
     "@tailwindcss/postcss": "^4.0.14",
     "chessfield": "^1.2.0",
     "chessground": "^9.1.1",
@@ -50,5 +55,6 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript": "~5.7.2"
-  }
+  },
+  "packageManager": "yarn@4.7.0"
 }
