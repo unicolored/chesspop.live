@@ -1,8 +1,16 @@
 <button (click)="toggleSounds()" class="btn btn-circle">
   @if (themeService.isSoundsOn()) {
-    <fa-duotone-icon title="Turn sounds ON" [icon]="soundsOn" [fixedWidth]="true"></fa-duotone-icon>
+    <fa-duotone-icon
+      title="Turn sounds ON"
+      [icon]="soundsOn"
+      [fixedWidth]="true"
+    ></fa-duotone-icon>
   } @else {
-    <fa-duotone-icon title="Turn sounds OFF" [icon]="soundsOff" [fixedWidth]="true"></fa-duotone-icon>
+    <fa-duotone-icon
+      title="Turn sounds OFF"
+      [icon]="soundsOff"
+      [fixedWidth]="true"
+    ></fa-duotone-icon>
   }
 </button>
 
@@ -10,8 +18,16 @@
 
 <button (click)="toggleMode()" class="btn btn-circle">
   @if (themeService.isDarkMode()) {
-    <fa-duotone-icon title="Turn light on" [icon]="dark" [fixedWidth]="true"></fa-duotone-icon>
+    <fa-duotone-icon
+      title="Turn light on"
+      [icon]="dark"
+      [fixedWidth]="true"
+    ></fa-duotone-icon>
   } @else {
-    <fa-duotone-icon title="Turn light off" [icon]="light" [fixedWidth]="true"></fa-duotone-icon>
+    <fa-duotone-icon
+      title="Turn light off"
+      [icon]="light"
+      [fixedWidth]="true"
+    ></fa-duotone-icon>
   }
 </button>
