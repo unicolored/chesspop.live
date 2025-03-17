@@ -10,3 +10,4 @@
   /*prefix:;*/
   logs: true;
 }
+@plugin "@tailwindcss/typography";
