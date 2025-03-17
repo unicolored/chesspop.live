@@ -1,0 +1,51 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    env:
+      FONTAWESOME_PACKAGE_TOKEN: ${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
+    permissions:
+      contents: write
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js with Corepack (using Node 22)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22' # Updated to Node 22
+
+      # Step 3: Enable and prepare Corepack
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+
+      # Step 4: Install dependencies
+      - name: Install Dependencies
+        run: yarn install
+
+      # Step 4.5: Tests
+      - name: Prettier check
+        run: yarn check
+
+      # Step 5: Build the Angular app
+      - name: Build
+        run: yarn prod
+
+      # Step 6: Deploy to GitHub Pages
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist/app/browser
+          branch: gh-pages
