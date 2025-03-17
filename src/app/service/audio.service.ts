@@ -19,7 +19,6 @@ export class AudioService {
   }
 
   playSound(frequency: number, type: OscillatorType, duration: number) {
-    console.log("sound!");
     if (isPlatformBrowser(this.platformID)) {
       if (!this.audioContext) return;
 
