@@ -1,16 +1,21 @@
 import { Component, computed, input } from "@angular/core";
 import { PlayerUI } from "../../../pages/page-live/feed.interface";
+import { FaDuotoneIconComponent } from "@fortawesome/angular-fontawesome";
+import { faChessKing } from "@fortawesome/sharp-duotone-solid-svg-icons";
 
 @Component({
   selector: "app-player",
-  imports: [],
+  imports: [FaDuotoneIconComponent],
   template: `
     <div class="badge badge-lg">
-      @if (p().color === "white") {
-        <span class="text-xl">W::</span>
-      } @else {
-        <span class="text-xl">B::</span>
-      }
+      <div class="badge badge-outline badge-neutral">
+        <fa-duotone-icon
+          [title]="p().color === 'white' ? 'White' : 'Black'"
+          [icon]="chessPiece"
+          [fixedWidth]="true"
+          [swapOpacity]="p().color === 'white'"
+        ></fa-duotone-icon>
+      </div>
 
       <b>{{ p().name }}</b>
 
@@ -26,4 +31,5 @@ import { PlayerUI } from "../../../pages/page-live/feed.interface";
 export class PlayerComponent {
   player = input.required<Partial<PlayerUI>>();
   p = computed(() => this.player());
+  protected readonly chessPiece = faChessKing;
 }
