@@ -30,50 +30,53 @@ import { ThemeService } from "../../service/theme.service";
   standalone: true,
   imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent],
   template: `
-    <div class="my-2 flex justify-between">
-      <div class="flex w-1/2 justify-between">
-        <select class="select select-primary">
-          <option value="top">Lichess</option>
-        </select>
+    @defer (on timer(200)) {
+      <div class="my-2 flex justify-between">
+        <div class="flex w-1/2 justify-between">
+          <select class="select select-primary">
+            <option value="top">Lichess</option>
+          </select>
 
-        <select
-          class="select select-primary"
-          [(ngModel)]="selectedChannel"
-          (change)="loadChannel()"
-        >
-          <option disabled selected>Channel</option>
-          <option value="top">Top Rated</option>
-          <option value="bullet">Bullet</option>
-          <option value="blitz">Blitz</option>
-          <option value="rapid">Rapid</option>
-        </select>
+          <select
+            class="select select-primary"
+            [(ngModel)]="selectedChannel"
+            (change)="loadChannel()"
+          >
+            <option disabled selected>Channel</option>
+            <option value="top">Top Rated</option>
+            <option value="bullet">Bullet</option>
+            <option value="blitz">Blitz</option>
+            <option value="rapid">Rapid</option>
+          </select>
+        </div>
+
+        <!--      <div>-->
+        <!--        <div-->
+        <!--          aria-label="success"-->
+        <!--          class="status status-success status-lg ml-2"-->
+        <!--          [class.animate-ping]="false"-->
+        <!--        ></div>-->
+        <!--        <button class="btn btn-ghost" (click)="togglePause()">-->
+        <!--          {{ isPaused ? "Resume" : "Pause" }}-->
+        <!--        </button>-->
+        <!--      </div>-->
       </div>
 
-      <!--      <div>-->
-      <!--        <div-->
-      <!--          aria-label="success"-->
-      <!--          class="status status-success status-lg ml-2"-->
-      <!--          [class.animate-ping]="false"-->
-      <!--        ></div>-->
-      <!--        <button class="btn btn-ghost" (click)="togglePause()">-->
-      <!--          {{ isPaused ? "Resume" : "Pause" }}-->
-      <!--        </button>-->
+      <div class="flex w-full justify-center">
+        <div class="chessfield-wrap" #chessfield></div>
+      </div>
+
+      <app-players
+        [players]="playersComputed()"
+        (emitCameraCol)="updateCamera($event)"
+      ></app-players>
+
+      <!--    <div class="info-controls">-->
+      <!--      <div class="controls">-->
+      <!--        <button (click)="toggleTheme()">Toggle Theme</button>-->
       <!--      </div>-->
-    </div>
-
-    <div class="flex w-full justify-center">
-      <div class="chessfield-wrap" #chessfield></div>
-    </div>
-    <app-players
-      [players]="playersComputed()"
-      (emitCameraCol)="updateCamera($event)"
-    ></app-players>
-
-    <!--    <div class="info-controls">-->
-    <!--      <div class="controls">-->
-    <!--        <button (click)="toggleTheme()">Toggle Theme</button>-->
-    <!--      </div>-->
-    <!--    </div>-->
+      <!--    </div>-->
+    }
   `,
   styleUrls: ["../pages.common.scss", "./live.component.scss"],
 })
@@ -207,7 +210,9 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           if (data.t === "fen") {
             const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
-            this.chessfield.setFen(data.d.fen, lastMove);
+            if (this.chessfield) {
+              this.chessfield.setFen(data.d.fen, lastMove);
+            }
           }
         }
       },
@@ -220,23 +225,23 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  togglePause() {
-    // this.isPaused = !this.isPaused;
-    if (!this.isPaused) {
-      this.loadChannel();
-    } else {
-      this.streamService.stopTv();
-    }
-  }
+  // togglePause() {
+  //   // this.isPaused = !this.isPaused;
+  //   if (!this.isPaused) {
+  //     this.loadChannel();
+  //   } else {
+  //     this.streamService.stopTv();
+  //   }
+  // }
 
-  toggleTheme() {
-    this.currentTheme = this.currentTheme === "light" ? "dark" : "light";
-    // this.chessfield.setFen(this.chessfield['fen'], { theme: this.currentTheme }); // Assuming fen is accessible
-  }
-
-  updateSize() {
-    // this.chessfield.updatePosition(this.chessfield['fen'], { size: this.boardSize });
-  }
+  // toggleTheme() {
+  //   this.currentTheme = this.currentTheme === "light" ? "dark" : "light";
+  //   // this.chessfield.setFen(this.chessfield['fen'], { theme: this.currentTheme }); // Assuming fen is accessible
+  // }
+  //
+  // updateSize() {
+  //   // this.chessfield.updatePosition(this.chessfield['fen'], { size: this.boardSize });
+  // }
 
   resetFeed(): void {
     if (this.subscription) {
@@ -249,17 +254,17 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resetFeed();
   }
 
-  randomFen() {
-    let id;
-    do {
-      id = Math.floor(Math.random() * this.randomFens.length);
-    } while (id === this.previousId);
-
-    this.previousId = id;
-
-    const { fen, lastMove } = this.randomFens[id];
-    this.chessfield.setFen(fen, lastMove);
-  }
+  // randomFen() {
+  //   let id;
+  //   do {
+  //     id = Math.floor(Math.random() * this.randomFens.length);
+  //   } while (id === this.previousId);
+  //
+  //   this.previousId = id;
+  //
+  //   const { fen, lastMove } = this.randomFens[id];
+  //   this.chessfield.setFen(fen, lastMove);
+  // }
 
   updateCamera(event: string | undefined) {
     // @ts-ignore
