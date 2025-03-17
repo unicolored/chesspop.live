@@ -1,17 +1,17 @@
 {
-  "name": "chessfield-live",
+  "name": "chesspop.live",
   "version": "0.4.2",
   "scripts": {
     "check": "npx prettier --check ./src",
     "format": "npx prettier -w ./src",
     "prod": "ng build --configuration production --base-href \"/\"",
-    "deploy": "ngh --dir=dist/chessfield-live/browser",
+    "deploy": "ngh --dir=dist/app/browser",
     "ng": "ng",
-    "start": "ng serve chessfield-live --hmr=false",
+    "start": "ng serve chesspop.live",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:chessfield-live": "node dist/chessfield-live/server/server.mjs"
+    "serve:ssr:chesspop.live": "node dist/app/server/server.mjs"
   },
   "private": true,
   "dependencies": {
