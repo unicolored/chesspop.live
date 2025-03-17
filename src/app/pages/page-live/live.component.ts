@@ -14,7 +14,16 @@ import {
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { LichessTvFeed } from "./feed.interface";
-import { Subscription } from "rxjs";
+import {
+  filter,
+  fromEvent,
+  startWith,
+  Subject,
+  Subscription,
+  switchMap,
+  takeUntil,
+  tap,
+} from "rxjs";
 import { Chessfield } from "chessfield";
 import * as cg from "chessground/types";
 import { StreamService } from "../../service/stream.service";
@@ -177,9 +186,10 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
 
   canvasElement!: HTMLCanvasElement;
 
+  private destroy$ = new Subject<void>();
+
   constructor() {
     effect(() => {
-      console.log("🟢 effect", "chessfieldElementFound");
       const el = this.chessfieldElement();
 
       if (el) {
@@ -189,7 +199,6 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
     });
     effect(() => {
       const isDarkMode = this.themeService.isDarkMode();
-      console.log("🟣 effect", "darkMode changed", isDarkMode);
       if (this.canvasElement && this.chessfield) {
         // this.chessfield.configUpdate({ mode: "dark" });
         this.updateCamera(isDarkMode ? "dark" : "light");
@@ -221,31 +230,75 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
 
     const channelSelected = feedsMap.get(this.selectedChannel);
 
+    const visibility$ = fromEvent(document, "visibilitychange").pipe(
+      takeUntil(this.destroy$), // Cleanup on component destroy
+    );
+
+    const chessMoves$ = this.streamService.startTv(channelSelected);
+
+    visibility$
+      .pipe(
+        // Start with the current visibility state
+        startWith(null),
+        // Only proceed when tab is visible
+        // filter(() => document.visibilityState === "visible"),
+        // tap(() => {
+        //   console.log(document.visibilityState);
+        // }),
+        // Fetch moves when visible, pause when hidden
+        switchMap(() => chessMoves$),
+        takeUntil(this.destroy$),
+      )
+      .subscribe({
+        next: (data: LichessTvFeed | null) => {
+          if (data) {
+            if (data.t === "featured") {
+              const players = data.d.players;
+              if (players) {
+                this.players.set(players);
+              }
+            }
+            if (data.t === "fen") {
+              const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
+              if (this.chessfield) {
+                this.chessfield.setFen(data.d.fen, lastMove);
+              }
+            }
+          }
+        },
+        error: (err) => {
+          console.error("Stream error:", err);
+        },
+        complete: () => {
+          console.log("Stream completed");
+        },
+      });
+
     // const stream = fetch('https://lichess.org/api/games/user/neio',{headers:{Accept:'application/x-ndjson'}});
-    this.subscription = this.streamService.startTv(channelSelected).subscribe({
-      next: (data: LichessTvFeed | null) => {
-        if (data) {
-          if (data.t === "featured") {
-            const players = data.d.players;
-            if (players) {
-              this.players.set(players);
-            }
-          }
-          if (data.t === "fen") {
-            const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
-            if (this.chessfield) {
-              this.chessfield.setFen(data.d.fen, lastMove);
-            }
-          }
-        }
-      },
-      error: (err) => {
-        console.error("Stream error:", err);
-      },
-      complete: () => {
-        console.log("Stream completed");
-      },
-    });
+    // this.subscription = this.streamService.startTv(channelSelected).subscribe({
+    //   next: (data: LichessTvFeed | null) => {
+    //     if (data) {
+    //       if (data.t === "featured") {
+    //         const players = data.d.players;
+    //         if (players) {
+    //           this.players.set(players);
+    //         }
+    //       }
+    //       if (data.t === "fen") {
+    //         const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
+    //         if (this.chessfield) {
+    //           this.chessfield.setFen(data.d.fen, lastMove);
+    //         }
+    //       }
+    //     }
+    //   },
+    //   error: (err) => {
+    //     console.error("Stream error:", err);
+    //   },
+    //   complete: () => {
+    //     console.log("Stream completed");
+    //   },
+    // });
   }
 
   // togglePause() {
@@ -269,6 +322,8 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
   resetFeed(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
+      this.destroy$.next();
+      this.destroy$.complete();
     }
     this.streamService.stopTv();
   }
