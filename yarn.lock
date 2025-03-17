@@ -4316,9 +4316,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chessfield-live@workspace:.":
+"chessfield@npm:^1.2.0":
+  version: 1.3.1
+  resolution: "chessfield@npm:1.3.1"
+  checksum: 10c0/9c471e9e3e9f8e4e610f690aab9f5178e744866b9efcb38df40d1c812e1fb93dab0323c30713e3eb2ec02185daf0b5ae0bc0893c38eba41a5ede4504f560a2dd
+  languageName: node
+  linkType: hard
+
+"chessground@npm:^9.1.1":
+  version: 9.1.1
+  resolution: "chessground@npm:9.1.1"
+  checksum: 10c0/37949a6b4303172c76f0799de47ea4dba0935b665b55e73fe15bb217ece09d8573302852d5b24c00437eae5fa6d4bdaf0983ed254f4ab61e1de22acbcd75eff6
+  languageName: node
+  linkType: hard
+
+"chesspop.live@workspace:.":
   version: 0.0.0-use.local
-  resolution: "chessfield-live@workspace:."
+  resolution: "chesspop.live@workspace:."
   dependencies:
     "@angular-devkit/build-angular": "npm:^19.2.2"
     "@angular/cli": "npm:^19.2.2"
@@ -4360,20 +4374,6 @@ __metadata:
     zone.js: "npm:~0.15.0"
   languageName: unknown
   linkType: soft
-
-"chessfield@npm:^1.2.0":
-  version: 1.3.1
-  resolution: "chessfield@npm:1.3.1"
-  checksum: 10c0/9c471e9e3e9f8e4e610f690aab9f5178e744866b9efcb38df40d1c812e1fb93dab0323c30713e3eb2ec02185daf0b5ae0bc0893c38eba41a5ede4504f560a2dd
-  languageName: node
-  linkType: hard
-
-"chessground@npm:^9.1.1":
-  version: 9.1.1
-  resolution: "chessground@npm:9.1.1"
-  checksum: 10c0/37949a6b4303172c76f0799de47ea4dba0935b665b55e73fe15bb217ece09d8573302852d5b24c00437eae5fa6d4bdaf0983ed254f4ab61e1de22acbcd75eff6
-  languageName: node
-  linkType: hard
 
 "chokidar@npm:^3.5.1, chokidar@npm:^3.6.0":
   version: 3.6.0

@@ -7,7 +7,7 @@
     "prod": "ng build --configuration production --base-href \"/\"",
     "deploy": "ngh --dir=dist/app/browser",
     "ng": "ng",
-    "start": "ng serve chesspop.live",
+    "start": "ng serve chesspop.live --no-hmr",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
