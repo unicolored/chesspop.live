@@ -1,10 +1,9 @@
 import { Component, inject, PLATFORM_ID, OnInit } from "@angular/core";
 import { ThemeService } from "../../service/theme.service";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { faSun, faMoonStars } from "@fortawesome/sharp-duotone-solid-svg-icons";
 import {
   faLightbulbOn,
-  faLightbulb,
+  faLightbulbSlash,
 } from "@fortawesome/sharp-duotone-solid-svg-icons";
 import { FaDuotoneIconComponent } from "@fortawesome/angular-fontawesome";
 
@@ -18,7 +17,7 @@ export class ThemeToggleComponent implements OnInit {
   themeService = inject(ThemeService);
   isDarkMode = this.themeService.isDarkMode();
   platformID = inject(PLATFORM_ID);
-  protected readonly light = faLightbulb;
+  protected readonly light = faLightbulbSlash;
   protected readonly dark = faLightbulbOn;
 
   ngOnInit() {
