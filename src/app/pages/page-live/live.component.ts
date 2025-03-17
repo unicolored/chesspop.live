@@ -198,6 +198,8 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.streamService.isLoadingSignal.set(true);
+
     this.loadChannel();
   }
   //
@@ -308,6 +310,8 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
   initChessfield() {
     if (isPlatformBrowser(this.platformID)) {
       // this.canvasElement = this.chessfieldElement()?.nativeElement;
+
+      this.streamService.isLoadingSignal.set(false);
 
       this.chessfield = new Chessfield(this.canvasElement, {
         // mode: this.themeService.isDarkMode() ? "dark" : "light",

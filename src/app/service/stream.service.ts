@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { computed, Injectable, signal } from "@angular/core";
 import { Observable, of, Subject } from "rxjs";
 import { LichessTvFeed } from "../pages/page-live/feed.interface";
 
@@ -7,6 +7,10 @@ import { LichessTvFeed } from "../pages/page-live/feed.interface";
 })
 export class StreamService {
   reader: ReadableStreamDefaultReader<Uint8Array> | null = null; // Store the reader globally to control it
+
+  isLoadingSignal = signal<boolean>(false);
+  isLoading = computed<boolean>(() => this.isLoadingSignal());
+
   isStreaming = false; // Flag to track streaming status
 
   startTv(streamUrl: string): Observable<LichessTvFeed | null> {

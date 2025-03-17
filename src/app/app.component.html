@@ -1,15 +1,12 @@
 <div class="navbar bg-base-100 shadow-sm">
   <div class="navbar-start">
     <a class="btn btn-ghost border-0 text-xl" href="/">
-      <i
-        class="fa-duotone fa-solid fa-popcorn"
-        [class.fa-flip]="isLoading"
-        style="
-          --fa-primary-color: #d40c0c;
-          --fa-secondary-color: #e9e921;
-          --fa-secondary-opacity: 1;
-        "
-      ></i>
+      <fa-duotone-icon [icon]="faPopcorn"
+                       [fixedWidth]="true"
+                       [animation]="streamService.isLoading() ? 'bounce' : undefined"
+                       primaryColor="#d40c0c"
+                       secondaryColor="#e9e921"
+                       secondaryOpacity="1"></fa-duotone-icon>
       ChessPop
     </a>
     <a class="btn btn-ghost border-0 text-xl" href="/">Live</a>

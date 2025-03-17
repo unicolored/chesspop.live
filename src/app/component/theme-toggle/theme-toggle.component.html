@@ -1,10 +1,15 @@
 <button
   (click)="toggleTheme()"
-  class="btn btn-ghost btn-md btn-circle border-0"
+  class="btn btn-circle"
 >
   @if (themeService.isDarkMode()) {
-    LIGHT
+    <fa-duotone-icon [icon]="light"
+                     [fixedWidth]="true"
+                     secondaryOpacity="1"></fa-duotone-icon>
   } @else {
-    DARK
+
+    <fa-duotone-icon [icon]="dark"
+                     [fixedWidth]="true"
+                     secondaryOpacity="1"></fa-duotone-icon>
   }
 </button>
