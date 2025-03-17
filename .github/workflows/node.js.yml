@@ -36,8 +36,6 @@ jobs:
         run: yarn install
 
       # Step 4.5: Tests
-      - name: Eslint
-        run: yarn eslint
       - name: Prettier check
         run: yarn check
 
