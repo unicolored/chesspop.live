@@ -15,14 +15,12 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { LichessTvFeed } from "./feed.interface";
 import {
-  filter,
   fromEvent,
   startWith,
   Subject,
   Subscription,
   switchMap,
   takeUntil,
-  tap,
 } from "rxjs";
 import { Chessfield } from "chessfield";
 import * as cg from "chessground/types";
@@ -34,6 +32,7 @@ import {
   PlayersComponent,
 } from "../../component/players/players.component";
 import { ThemeService } from "../../service/theme.service";
+import { AudioService } from "../../service/audio.service";
 
 @Component({
   standalone: true,
@@ -183,6 +182,7 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
   chessfield!: Chessfield;
   platformID = inject(PLATFORM_ID);
   themeService = inject(ThemeService);
+  audioService = inject(AudioService);
 
   canvasElement!: HTMLCanvasElement;
 
@@ -209,8 +209,12 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
   ngOnInit() {
     this.streamService.isLoadingSignal.set(true);
 
+    if (this.themeService.isSoundsOn()) {
+      this.audioService.initSounds();
+    }
     this.loadChannel();
   }
+
   //
 
   ngAfterContentInit() {
@@ -230,75 +234,78 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
 
     const channelSelected = feedsMap.get(this.selectedChannel);
 
-    const visibility$ = fromEvent(document, "visibilitychange").pipe(
-      takeUntil(this.destroy$), // Cleanup on component destroy
-    );
+    if (isPlatformBrowser(this.platformID)) {
+      const visibility$ = fromEvent(document, "visibilitychange").pipe(
+        takeUntil(this.destroy$), // Cleanup on component destroy
+      );
 
-    const chessMoves$ = this.streamService.startTv(channelSelected);
+      const chessMoves$ = this.streamService.startTv(channelSelected);
 
-    visibility$
-      .pipe(
-        // Start with the current visibility state
-        startWith(null),
-        // Only proceed when tab is visible
-        // filter(() => document.visibilityState === "visible"),
-        // tap(() => {
-        //   console.log(document.visibilityState);
-        // }),
-        // Fetch moves when visible, pause when hidden
-        switchMap(() => chessMoves$),
-        takeUntil(this.destroy$),
-      )
-      .subscribe({
-        next: (data: LichessTvFeed | null) => {
-          if (data) {
-            if (data.t === "featured") {
-              const players = data.d.players;
-              if (players) {
-                this.players.set(players);
+      visibility$
+        .pipe(
+          // Start with the current visibility state
+          startWith(null),
+          // Only proceed when tab is visible
+          // filter(() => document.visibilityState === "visible"),
+          // tap(() => {
+          //   console.log(document.visibilityState);
+          // }),
+          // Fetch moves when visible, pause when hidden
+          switchMap(() => chessMoves$),
+          takeUntil(this.destroy$),
+        )
+        .subscribe({
+          next: (data: LichessTvFeed | null) => {
+            if (data) {
+              if (data.t === "featured") {
+                const players = data.d.players;
+                if (players) {
+                  this.players.set(players);
+                }
+              }
+              if (data.t === "fen") {
+                const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
+                if (this.chessfield) {
+                  this.audioService.playSound(133, "sine", 0.1);
+                  this.chessfield.setFen(data.d.fen, lastMove);
+                }
               }
             }
-            if (data.t === "fen") {
-              const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
-              if (this.chessfield) {
-                this.chessfield.setFen(data.d.fen, lastMove);
-              }
-            }
-          }
-        },
-        error: (err) => {
-          console.error("Stream error:", err);
-        },
-        complete: () => {
-          console.log("Stream completed");
-        },
-      });
+          },
+          error: (err) => {
+            console.error("Stream error:", err);
+          },
+          complete: () => {
+            console.log("Stream completed");
+          },
+        });
 
-    // const stream = fetch('https://lichess.org/api/games/user/neio',{headers:{Accept:'application/x-ndjson'}});
-    // this.subscription = this.streamService.startTv(channelSelected).subscribe({
-    //   next: (data: LichessTvFeed | null) => {
-    //     if (data) {
-    //       if (data.t === "featured") {
-    //         const players = data.d.players;
-    //         if (players) {
-    //           this.players.set(players);
-    //         }
-    //       }
-    //       if (data.t === "fen") {
-    //         const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
-    //         if (this.chessfield) {
-    //           this.chessfield.setFen(data.d.fen, lastMove);
-    //         }
-    //       }
-    //     }
-    //   },
-    //   error: (err) => {
-    //     console.error("Stream error:", err);
-    //   },
-    //   complete: () => {
-    //     console.log("Stream completed");
-    //   },
-    // });
+      // const stream = fetch('https://lichess.org/api/games/user/neio',{headers:{Accept:'application/x-ndjson'}});
+      // this.subscription = this.streamService.startTv(channelSelected).subscribe({
+      //   next: (data: LichessTvFeed | null) => {
+      //     if (data) {
+      //       if (data.t === "featured") {
+      //         const players = data.d.players;
+      //         if (players) {
+      //           this.players.set(players);
+      //         }
+      //       }
+      //       if (data.t === "fen") {
+      //         const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
+      //         if (this.chessfield) {
+      //           this.chessfield.setFen(data.d.fen, lastMove);
+      //         }
+      //       }
+      //     }
+      //   },
+      //   error: (err) => {
+      //     console.error("Stream error:", err);
+      //   },
+      //   complete: () => {
+      //     console.log("Stream completed");
+      //   },
+      // });
+    }
   }
 
   // togglePause() {
