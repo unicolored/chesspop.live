@@ -35,8 +35,8 @@ GIT_TAG="v${PACKAGE_VERSION}"
 git tag -d "${GIT_TAG}" || true
 GIT_MERGE_AUTOEDIT=no git flow release finish "${PACKAGE_VERSION}" -m "⭐️ Releasing version tag 🏷️ ${GIT_TAG}" -T "${GIT_TAG}"
 
-echo "Pushing main."
-git push origin main
+echo "Pushing next."
+git push origin next
 echo "Pushing develop."
 git push origin develop
 echo "Pushing --tags."
