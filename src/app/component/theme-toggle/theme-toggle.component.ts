@@ -1,10 +1,18 @@
-import { Component, effect, inject, PLATFORM_ID, OnInit } from "@angular/core";
+import { Component, inject, PLATFORM_ID, OnInit } from "@angular/core";
 import { ThemeService } from "../../service/theme.service";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
+import {
+  faLightbulbOn,
+  faLightbulbSlash,
+  faVolume,
+  faVolumeXmark,
+} from "@fortawesome/sharp-duotone-solid-svg-icons";
+import { FaDuotoneIconComponent } from "@fortawesome/angular-fontawesome";
+import { AudioService } from "../../service/audio.service";
 
 @Component({
   selector: "app-theme-toggle",
-  imports: [CommonModule],
+  imports: [CommonModule, FaDuotoneIconComponent],
   templateUrl: "./theme-toggle.component.html",
   styleUrl: "./theme-toggle.component.css",
 })
@@ -12,6 +20,10 @@ export class ThemeToggleComponent implements OnInit {
   themeService = inject(ThemeService);
   isDarkMode = this.themeService.isDarkMode();
   platformID = inject(PLATFORM_ID);
+  protected readonly light = faLightbulbSlash;
+  protected readonly dark = faLightbulbOn;
+  protected readonly soundsOn = faVolume;
+  protected readonly soundsOff = faVolumeXmark;
 
   ngOnInit() {
     const isBrowser = isPlatformBrowser(this.platformID);
@@ -20,17 +32,26 @@ export class ThemeToggleComponent implements OnInit {
       const isDarkMode = darkMode === "dark";
 
       this.setDarkMode(isDarkMode);
+      this.setSoundsOn(false);
     }
   }
 
-  setDarkMode(dark: boolean) {
-    this.themeService.setDarkMode(dark);
-    this.updateTheme(dark);
+  setDarkMode(toggle: boolean) {
+    this.themeService.setDarkMode(toggle);
+    this.updateTheme(toggle);
   }
 
-  toggleTheme() {
-    this.themeService.toggleTheme();
+  setSoundsOn(toggle: boolean) {
+    this.themeService.setSoundsOn(toggle);
+  }
+
+  toggleMode() {
+    this.themeService.toggleMode();
     this.updateTheme(this.themeService.isDarkMode());
+  }
+
+  toggleSounds() {
+    this.themeService.toggleSounds();
   }
 
   private updateTheme(dark: boolean) {

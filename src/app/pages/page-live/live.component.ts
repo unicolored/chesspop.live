@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterContentInit,
   Component,
   computed,
   effect,
@@ -14,7 +14,14 @@ import {
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { LichessTvFeed } from "./feed.interface";
-import { Subscription } from "rxjs";
+import {
+  fromEvent,
+  startWith,
+  Subject,
+  Subscription,
+  switchMap,
+  takeUntil,
+} from "rxjs";
 import { Chessfield } from "chessfield";
 import * as cg from "chessground/types";
 import { StreamService } from "../../service/stream.service";
@@ -25,59 +32,81 @@ import {
   PlayersComponent,
 } from "../../component/players/players.component";
 import { ThemeService } from "../../service/theme.service";
+import { AudioService } from "../../service/audio.service";
 
 @Component({
   standalone: true,
   imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent],
   template: `
-    <div class="my-2 flex justify-between">
-      <div class="flex w-1/2 justify-between">
-        <select class="select select-primary">
-          <option value="top">Lichess</option>
-        </select>
+    @defer {
+      <div class="my-2 flex justify-between">
+        <div class="flex w-1/2 justify-between">
+          <select class="select select-primary">
+            <option value="top">Lichess</option>
+          </select>
 
-        <select
-          class="select select-primary"
-          [(ngModel)]="selectedChannel"
-          (change)="loadChannel()"
-        >
-          <option disabled selected>Channel</option>
-          <option value="top">Top Rated</option>
-          <option value="bullet">Bullet</option>
-          <option value="blitz">Blitz</option>
-          <option value="rapid">Rapid</option>
-        </select>
+          <select
+            class="select select-primary"
+            [(ngModel)]="selectedChannel"
+            (change)="loadChannel()"
+          >
+            <option disabled selected>Channel</option>
+            <option value="top">Top Rated</option>
+            <option value="bullet">Bullet</option>
+            <option value="blitz">Blitz</option>
+            <option value="rapid">Rapid</option>
+          </select>
+        </div>
+
+        <!--      <div>-->
+        <!--        <div-->
+        <!--          aria-label="success"-->
+        <!--          class="status status-success status-lg ml-2"-->
+        <!--          [class.animate-ping]="false"-->
+        <!--        ></div>-->
+        <!--        <button class="btn btn-ghost" (click)="togglePause()">-->
+        <!--          {{ isPaused ? "Resume" : "Pause" }}-->
+        <!--        </button>-->
+        <!--      </div>-->
       </div>
 
-      <!--      <div>-->
-      <!--        <div-->
-      <!--          aria-label="success"-->
-      <!--          class="status status-success status-lg ml-2"-->
-      <!--          [class.animate-ping]="false"-->
-      <!--        ></div>-->
-      <!--        <button class="btn btn-ghost" (click)="togglePause()">-->
-      <!--          {{ isPaused ? "Resume" : "Pause" }}-->
-      <!--        </button>-->
+      <div class="flex w-full justify-center">
+        <div class="chessfield-wrap" #chessfield></div>
+      </div>
+
+      <app-players
+        [players]="playersComputed()"
+        (emitCameraCol)="updateCamera($event)"
+      ></app-players>
+
+      <!--    <div class="info-controls">-->
+      <!--      <div class="controls">-->
+      <!--        <button (click)="toggleTheme()">Toggle Theme</button>-->
       <!--      </div>-->
-    </div>
+      <!--    </div>-->
+    } @placeholder (minimum 1s) {
+      <div class="my-2 flex justify-between">
+        <div class="flex w-1/2 justify-between">
+          <select class="select select-primary"></select>
 
-    <div class="flex w-full justify-center">
-      <div class="chessfield-wrap" #chessfield></div>
-    </div>
-    <app-players
-      [players]="playersComputed()"
-      (emitCameraCol)="updateCamera($event)"
-    ></app-players>
+          <select class="select select-primary"></select>
+        </div>
+      </div>
 
-    <!--    <div class="info-controls">-->
-    <!--      <div class="controls">-->
-    <!--        <button (click)="toggleTheme()">Toggle Theme</button>-->
-    <!--      </div>-->
-    <!--    </div>-->
+      <div class="flex w-full justify-center">
+        <div class="chessfield-wrap"></div>
+      </div>
+
+      <app-players [players]="playersComputed()"></app-players>
+    } @loading (minimum 1s; after 500ms) {
+      <p>Loading ChessPop.</p>
+    } @error {
+      <p>Failed to pop.</p>
+    }
   `,
   styleUrls: ["../pages.common.scss", "./live.component.scss"],
 })
-export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
   title = "chessfield-tv";
 
   selectedChannel = "top";
@@ -153,33 +182,43 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
   chessfield!: Chessfield;
   platformID = inject(PLATFORM_ID);
   themeService = inject(ThemeService);
+  audioService = inject(AudioService);
+
+  canvasElement!: HTMLCanvasElement;
+
+  private destroy$ = new Subject<void>();
 
   constructor() {
     effect(() => {
+      const el = this.chessfieldElement();
+
+      if (el) {
+        this.canvasElement = el.nativeElement;
+        this.initChessfield();
+      }
+    });
+    effect(() => {
       const isDarkMode = this.themeService.isDarkMode();
-      if (this.chessfield) {
-        this.chessfield.configUpdate({ mode: isDarkMode ? "dark" : "light" });
+      if (this.canvasElement && this.chessfield) {
+        // this.chessfield.configUpdate({ mode: "dark" });
+        this.updateCamera(isDarkMode ? "dark" : "light");
       }
     });
   }
 
   ngOnInit() {
+    this.streamService.isLoadingSignal.set(true);
+
+    if (this.themeService.isSoundsOn()) {
+      this.audioService.initSounds();
+    }
     this.loadChannel();
   }
+
   //
 
-  ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformID)) {
-      const element: HTMLCanvasElement =
-        this.chessfieldElement()?.nativeElement;
-
-      this.chessfield = new Chessfield(element, {
-        mode: this.themeService.isDarkMode() ? "dark" : "light",
-        theme: "green",
-        camera: "white",
-        angle: "right",
-      });
-    }
+  ngAfterContentInit() {
+    // this.initChessfield();
   }
 
   loadChannel() {
@@ -195,52 +234,103 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const channelSelected = feedsMap.get(this.selectedChannel);
 
-    // const stream = fetch('https://lichess.org/api/games/user/neio',{headers:{Accept:'application/x-ndjson'}});
-    this.subscription = this.streamService.startTv(channelSelected).subscribe({
-      next: (data: LichessTvFeed | null) => {
-        if (data) {
-          if (data.t === "featured") {
-            const players = data.d.players;
-            if (players) {
-              this.players.set(players);
-            }
-          }
-          if (data.t === "fen") {
-            const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
-            this.chessfield.setFen(data.d.fen, lastMove);
-          }
-        }
-      },
-      error: (err) => {
-        console.error("Stream error:", err);
-      },
-      complete: () => {
-        console.log("Stream completed");
-      },
-    });
-  }
+    if (isPlatformBrowser(this.platformID)) {
+      const visibility$ = fromEvent(document, "visibilitychange").pipe(
+        takeUntil(this.destroy$), // Cleanup on component destroy
+      );
 
-  togglePause() {
-    // this.isPaused = !this.isPaused;
-    if (!this.isPaused) {
-      this.loadChannel();
-    } else {
-      this.streamService.stopTv();
+      const chessMoves$ = this.streamService.startTv(channelSelected);
+
+      visibility$
+        .pipe(
+          // Start with the current visibility state
+          startWith(null),
+          // Only proceed when tab is visible
+          // filter(() => document.visibilityState === "visible"),
+          // tap(() => {
+          //   console.log(document.visibilityState);
+          // }),
+          // Fetch moves when visible, pause when hidden
+          switchMap(() => chessMoves$),
+          takeUntil(this.destroy$),
+        )
+        .subscribe({
+          next: (data: LichessTvFeed | null) => {
+            if (data) {
+              if (data.t === "featured") {
+                const players = data.d.players;
+                if (players) {
+                  this.players.set(players);
+                }
+              }
+              if (data.t === "fen") {
+                const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
+                if (this.chessfield) {
+                  this.audioService.playSound(133, "sine", 0.1);
+                  this.chessfield.setFen(data.d.fen, lastMove);
+                }
+              }
+            }
+          },
+          error: (err) => {
+            console.error("Stream error:", err);
+          },
+          complete: () => {
+            console.log("Stream completed");
+          },
+        });
+
+      // const stream = fetch('https://lichess.org/api/games/user/neio',{headers:{Accept:'application/x-ndjson'}});
+      // this.subscription = this.streamService.startTv(channelSelected).subscribe({
+      //   next: (data: LichessTvFeed | null) => {
+      //     if (data) {
+      //       if (data.t === "featured") {
+      //         const players = data.d.players;
+      //         if (players) {
+      //           this.players.set(players);
+      //         }
+      //       }
+      //       if (data.t === "fen") {
+      //         const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
+      //         if (this.chessfield) {
+      //           this.chessfield.setFen(data.d.fen, lastMove);
+      //         }
+      //       }
+      //     }
+      //   },
+      //   error: (err) => {
+      //     console.error("Stream error:", err);
+      //   },
+      //   complete: () => {
+      //     console.log("Stream completed");
+      //   },
+      // });
     }
   }
 
-  toggleTheme() {
-    this.currentTheme = this.currentTheme === "light" ? "dark" : "light";
-    // this.chessfield.setFen(this.chessfield['fen'], { theme: this.currentTheme }); // Assuming fen is accessible
-  }
-
-  updateSize() {
-    // this.chessfield.updatePosition(this.chessfield['fen'], { size: this.boardSize });
-  }
+  // togglePause() {
+  //   // this.isPaused = !this.isPaused;
+  //   if (!this.isPaused) {
+  //     this.loadChannel();
+  //   } else {
+  //     this.streamService.stopTv();
+  //   }
+  // }
+  //
+  // toggleTheme() {
+  //   this.currentTheme = this.currentTheme === "light" ? "dark" : "light";
+  //   // this.chessfield.setFen(this.chessfield['fen'], { theme: this.currentTheme }); // Assuming fen is accessible
+  // }
+  //
+  // updateSize() {
+  //   // this.chessfield.updatePosition(this.chessfield['fen'], { size: this.boardSize });
+  // }
 
   resetFeed(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
+      this.destroy$.next();
+      this.destroy$.complete();
     }
     this.streamService.stopTv();
   }
@@ -249,20 +339,48 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resetFeed();
   }
 
-  randomFen() {
-    let id;
-    do {
-      id = Math.floor(Math.random() * this.randomFens.length);
-    } while (id === this.previousId);
-
-    this.previousId = id;
-
-    const { fen, lastMove } = this.randomFens[id];
-    this.chessfield.setFen(fen, lastMove);
-  }
+  // randomFen() {
+  //   let id;
+  //   do {
+  //     id = Math.floor(Math.random() * this.randomFens.length);
+  //   } while (id === this.previousId);
+  //
+  //   this.previousId = id;
+  //
+  //   const { fen, lastMove } = this.randomFens[id];
+  //   this.chessfield.setFen(fen, lastMove);
+  // }
 
   updateCamera(event: string | undefined) {
+    console.log("updateCamera", event);
+
+    const options = {
+      // @ts-ignore
+      camera: event as Camera,
+      // @ts-ignore
+      angle: "center" as Angle,
+      // mode: this.themeService.isDarkMode() ? "dark" : "light",
+      // theme: "green",
+      // mode: this.themeService.isDarkMode() ? "dark" : "light",
+      mode: this.themeService.isDarkMode() ? "dark" : "light",
+    };
+
     // @ts-ignore
-    this.chessfield.configUpdate({ camera: event as Camera, angle: "center" });
+    this.chessfield.configUpdate(options);
+  }
+
+  initChessfield() {
+    if (isPlatformBrowser(this.platformID)) {
+      // this.canvasElement = this.chessfieldElement()?.nativeElement;
+
+      this.streamService.isLoadingSignal.set(false);
+
+      this.chessfield = new Chessfield(this.canvasElement, {
+        // mode: this.themeService.isDarkMode() ? "dark" : "light",
+        theme: "green",
+        camera: "white",
+        angle: "right",
+      });
+    }
   }
 }
