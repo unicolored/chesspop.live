@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterContentInit,
   Component,
   computed,
   effect,
@@ -30,7 +30,7 @@ import { ThemeService } from "../../service/theme.service";
   standalone: true,
   imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent],
   template: `
-    @defer (on timer(200)) {
+    @defer {
       <div class="my-2 flex justify-between">
         <div class="flex w-1/2 justify-between">
           <select class="select select-primary">
@@ -76,11 +76,29 @@ import { ThemeService } from "../../service/theme.service";
       <!--        <button (click)="toggleTheme()">Toggle Theme</button>-->
       <!--      </div>-->
       <!--    </div>-->
+    } @placeholder (minimum 1s) {
+      <div class="my-2 flex justify-between">
+        <div class="flex w-1/2 justify-between">
+          <select class="select select-primary"></select>
+
+          <select class="select select-primary"></select>
+        </div>
+      </div>
+
+      <div class="flex w-full justify-center">
+        <div class="chessfield-wrap"></div>
+      </div>
+
+      <app-players [players]="playersComputed()"></app-players>
+    } @loading (minimum 1s; after 500ms) {
+      <p>Loading ChessPop.</p>
+    } @error {
+      <p>Failed to pop.</p>
     }
   `,
   styleUrls: ["../pages.common.scss", "./live.component.scss"],
 })
-export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
   title = "chessfield-tv";
 
   selectedChannel = "top";
@@ -157,11 +175,24 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
   platformID = inject(PLATFORM_ID);
   themeService = inject(ThemeService);
 
+  canvasElement!: HTMLCanvasElement;
+
   constructor() {
     effect(() => {
+      console.log("🟢 effect", "chessfieldElementFound");
+      const el = this.chessfieldElement();
+
+      if (el) {
+        this.canvasElement = el.nativeElement;
+        this.initChessfield();
+      }
+    });
+    effect(() => {
       const isDarkMode = this.themeService.isDarkMode();
-      if (this.chessfield) {
-        this.chessfield.configUpdate({ mode: isDarkMode ? "dark" : "light" });
+      console.log("🟣 effect", "darkMode changed", isDarkMode);
+      if (this.canvasElement && this.chessfield) {
+        // this.chessfield.configUpdate({ mode: "dark" });
+        this.updateCamera(isDarkMode ? "dark" : "light");
       }
     });
   }
@@ -171,18 +202,8 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   //
 
-  ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformID)) {
-      const element: HTMLCanvasElement =
-        this.chessfieldElement()?.nativeElement;
-
-      this.chessfield = new Chessfield(element, {
-        mode: this.themeService.isDarkMode() ? "dark" : "light",
-        theme: "green",
-        camera: "white",
-        angle: "right",
-      });
-    }
+  ngAfterContentInit() {
+    // this.initChessfield();
   }
 
   loadChannel() {
@@ -233,7 +254,7 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
   //     this.streamService.stopTv();
   //   }
   // }
-
+  //
   // toggleTheme() {
   //   this.currentTheme = this.currentTheme === "light" ? "dark" : "light";
   //   // this.chessfield.setFen(this.chessfield['fen'], { theme: this.currentTheme }); // Assuming fen is accessible
@@ -267,7 +288,33 @@ export class LiveComponent implements OnInit, AfterViewInit, OnDestroy {
   // }
 
   updateCamera(event: string | undefined) {
+    console.log("updateCamera", event);
+
+    const options = {
+      // @ts-ignore
+      camera: event as Camera,
+      // @ts-ignore
+      angle: "center" as Angle,
+      // mode: this.themeService.isDarkMode() ? "dark" : "light",
+      // theme: "green",
+      // mode: this.themeService.isDarkMode() ? "dark" : "light",
+      mode: this.themeService.isDarkMode() ? "dark" : "light",
+    };
+
     // @ts-ignore
-    this.chessfield.configUpdate({ camera: event as Camera, angle: "center" });
+    this.chessfield.configUpdate(options);
+  }
+
+  initChessfield() {
+    if (isPlatformBrowser(this.platformID)) {
+      // this.canvasElement = this.chessfieldElement()?.nativeElement;
+
+      this.chessfield = new Chessfield(this.canvasElement, {
+        // mode: this.themeService.isDarkMode() ? "dark" : "light",
+        theme: "green",
+        camera: "white",
+        angle: "right",
+      });
+    }
   }
 }
