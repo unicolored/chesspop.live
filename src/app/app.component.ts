@@ -1,9 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { ThemeService } from "./service/theme.service";
 import { ThemeToggleComponent } from "./component/theme-toggle/theme-toggle.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { faCoffee } from "@fortawesome/sharp-duotone-solid-svg-icons";
+import { faPopcorn } from "@fortawesome/sharp-duotone-solid-svg-icons";
+import { StreamService } from "./service/stream.service";
 
 @Component({
   selector: "app-root",
@@ -14,5 +15,7 @@ import { faCoffee } from "@fortawesome/sharp-duotone-solid-svg-icons";
 })
 export class AppComponent {
   title = "chessfield-live";
-  isLoading: boolean = false;
+
+  streamService = inject(StreamService);
+  protected readonly faPopcorn = faPopcorn;
 }

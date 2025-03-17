@@ -7,13 +7,17 @@ import {
   signal,
 } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
+import { AudioService } from "./audio.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class ThemeService {
+  audioService = inject(AudioService);
   private darkMode = signal<boolean>(false);
   isDarkMode = computed<boolean>(() => this.darkMode());
+  private soundsOn = signal<boolean>(false);
+  isSoundsOn = computed<boolean>(() => this.soundsOn());
 
   platformID = inject(PLATFORM_ID);
 
@@ -38,12 +42,22 @@ export class ThemeService {
     });
   }
 
-  toggleTheme() {
+  toggleMode() {
     const darkMode = this.isDarkMode();
     this.darkMode.set(!darkMode);
   }
 
-  setDarkMode(dark: boolean) {
-    this.darkMode.set(dark);
+  setDarkMode(toggle: boolean) {
+    this.darkMode.set(toggle);
+  }
+
+  toggleSounds() {
+    const soundsOn = this.isSoundsOn();
+    this.soundsOn.set(!soundsOn);
+    this.audioService.initSounds(!soundsOn);
+  }
+
+  setSoundsOn(toggle: boolean) {
+    this.soundsOn.set(toggle);
   }
 }
