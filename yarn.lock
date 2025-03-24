@@ -4330,12 +4330,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chessfield@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "chessfield@npm:1.3.3"
-  dependencies:
-    terser: "npm:^5.39.0"
-  checksum: 10c0/036e6a9d9afb792fb8fc589a3a33f65286a5836e734e4f3c8060b8c771f6a15c22bc48f96e40e0f0b37ed0bcb27f2ecc6fe3ead02999453476739e28f89309d7
+"chessfield@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "chessfield@npm:1.4.0"
+  checksum: 10c0/7db8efb05650a27f5f40816c6e4823bef31a2d737cd87f6adfbf2f0d335ddf81b7dc53cb1832e3dfc232d82b2acb7cf2dd732abdd7470cec095ca580859f9dd6
   languageName: node
   linkType: hard
 
@@ -4370,7 +4368,7 @@ __metadata:
     "@types/express": "npm:^4.17.17"
     "@types/jasmine": "npm:~5.1.0"
     "@types/node": "npm:^18.18.0"
-    chessfield: "npm:^1.3.3"
+    chessfield: "npm:^1.4.0"
     chessground: "npm:^9.1.1"
     daisyui: "npm:^5.0.3"
     eslint: "npm:^9.22.0"
@@ -9734,7 +9732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser@npm:5.39.0, terser@npm:^5.31.1, terser@npm:^5.39.0":
+"terser@npm:5.39.0, terser@npm:^5.31.1":
   version: 5.39.0
   resolution: "terser@npm:5.39.0"
   dependencies:
