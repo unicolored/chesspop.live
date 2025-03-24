@@ -22,7 +22,7 @@ fi
 
 echo "🚀 VERSION: ${NEW_VERSION}"
 
-bash bin/deploy/test.sh
+bash script/test.sh
 
 git add --all && git commit -m "Preparing new release ${NEW_VERSION}..." || true
 NEXT_RELEASE="${NEW_VERSION}" # Bump manually (ex. 18.2.0)

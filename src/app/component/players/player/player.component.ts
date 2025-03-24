@@ -10,6 +10,7 @@ import { faChessKing } from "@fortawesome/sharp-duotone-solid-svg-icons";
     <div class="badge badge-lg">
       <div class="badge badge-outline badge-neutral">
         <fa-duotone-icon
+          class="text-gray-500 dark:text-gray-500"
           [title]="p().color === 'white' ? 'White' : 'Black'"
           [icon]="chessPiece"
           [fixedWidth]="true"
