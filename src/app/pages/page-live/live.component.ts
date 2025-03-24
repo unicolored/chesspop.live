@@ -377,7 +377,17 @@ export class LiveComponent implements OnInit, AfterContentInit, OnDestroy {
 
       this.chessfield = new Chessfield(this.canvasElement, {
         // mode: this.themeService.isDarkMode() ? "dark" : "light",
-        theme: "green",
+        plugins: {
+          themes: {
+            chesspop: {
+              light: "#e3dbc9",
+              dark: "#cb4444",
+              highlight: "#c99a39",
+              selected: "orange",
+            },
+          },
+        },
+        theme: "chesspop",
         camera: "white",
         angle: "right",
       });

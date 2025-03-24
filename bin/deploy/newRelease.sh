@@ -2,8 +2,11 @@
 
 set -e
 
+DEV_BRANCH="develop"
+PUB_BRANCH="next"
+
 # Check if current git branch is "develop"
-if [[ $(git rev-parse --abbrev-ref HEAD) != "develop" ]]; then
+if [[ $(git rev-parse --abbrev-ref HEAD) != "${DEV_BRANCH}" ]]; then
   echo "⚠️ You must be on the develop branch to run this script."
   exit 1
 fi
@@ -35,10 +38,12 @@ GIT_TAG="v${PACKAGE_VERSION}"
 git tag -d "${GIT_TAG}" || true
 GIT_MERGE_AUTOEDIT=no git flow release finish "${PACKAGE_VERSION}" -m "⭐️ Releasing version tag 🏷️ ${GIT_TAG}" -T "${GIT_TAG}"
 
-echo "Pushing next."
-git push origin next
-echo "Pushing develop."
-git push origin develop
+echo "Pushing ${DEV_BRANCH}."
+git push origin ${DEV_BRANCH}
+
+echo "Pushing ${PUB_BRANCH}."
+git push origin ${PUB_BRANCH}
+
 echo "Pushing --tags."
 git push origin --tags || true
 
