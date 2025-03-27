@@ -4330,10 +4330,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chessfield@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "chessfield@npm:1.4.0"
-  checksum: 10c0/7db8efb05650a27f5f40816c6e4823bef31a2d737cd87f6adfbf2f0d335ddf81b7dc53cb1832e3dfc232d82b2acb7cf2dd732abdd7470cec095ca580859f9dd6
+"chessfield@npm:^1.4.7":
+  version: 1.4.7
+  resolution: "chessfield@npm:1.4.7"
+  checksum: 10c0/1344c74d9495d977b7dfc12eba90768d81c0851710a1fd1fcbf681198c0a5bb7676dc6b77ead53f291090943c6d1597517846cde21e5f7c4204b4f96ca4e225d
   languageName: node
   linkType: hard
 
@@ -4368,7 +4368,7 @@ __metadata:
     "@types/express": "npm:^4.17.17"
     "@types/jasmine": "npm:~5.1.0"
     "@types/node": "npm:^18.18.0"
-    chessfield: "npm:^1.4.0"
+    chessfield: "npm:^1.4.7"
     chessground: "npm:^9.1.1"
     daisyui: "npm:^5.0.3"
     eslint: "npm:^9.22.0"
