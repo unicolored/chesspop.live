@@ -2,8 +2,8 @@
 
 set -e
 
-DEV_BRANCH="develop"
-PUB_BRANCH="next"
+DEV_BRANCH="next"
+PUB_BRANCH="main"
 
 # Check if current git branch is "develop"
 if [[ $(git rev-parse --abbrev-ref HEAD) != "${DEV_BRANCH}" ]]; then

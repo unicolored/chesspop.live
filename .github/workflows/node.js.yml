@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - none
 
 jobs:
   build-and-deploy:
@@ -15,25 +15,16 @@ jobs:
       contents: write
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js with Corepack (using Node 22)
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '22' # Updated to Node 22
-
-      # Step 3: Enable and prepare Corepack
-      - name: Enable Corepack
-        run: |
+          node-version: '23'
+      - run: |
           corepack enable
           corepack prepare yarn@stable --activate
-
-      # Step 4: Install dependencies
-      - name: Install Dependencies
-        run: yarn install
+      - run: yarn install
 
       # Step 4.5: Tests
       - name: Prettier check
