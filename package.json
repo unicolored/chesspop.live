@@ -1,6 +1,6 @@
 {
   "name": "chesspop.live",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "scripts": {
     "check": "npx prettier --check ./src",
     "format": "npx prettier -w ./src",
