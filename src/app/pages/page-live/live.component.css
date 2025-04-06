@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+.live-ui {
+  @apply flex flex-col;
+}
+
+section.chesspop-field {
+  @apply flex flex-col;
+
+  .chessfield-wrap {
+    @apply mx-auto flex h-[72vh] w-full lg:w-[80vw];
+  }
+
+  .app-players {
+    @apply flex flex-col gap-2 p-2 md:flex-row md:justify-around;
+    .app-player {
+      @apply flex w-full cursor-pointer justify-between gap-2 bg-orange-50 px-2 py-3 text-wrap hover:bg-orange-100;
+    }
+  }
+}
+
+aside.sidebar {
+  @apply mx-auto flex flex-col justify-between p-4 py-12 lg:w-[80vw];
+
+  header {
+    @apply flex flex-col;
+
+    button {
+      @apply cursor-pointer p-2 text-left font-bold uppercase hover:bg-orange-100;
+
+      &.active {
+        @apply bg-red-800 text-white;
+      }
+    }
+  }
+
+  footer {
+    @apply py-12 text-4xl;
+    p {
+      @apply mb-2 text-gray-800 dark:text-gray-400;
+    }
+    strong {
+      @apply text-red-800 dark:text-red-400;
+    }
+  }
+}
