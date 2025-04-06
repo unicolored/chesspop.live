@@ -1,4 +1,10 @@
-import { Component, computed, input, output } from "@angular/core";
+import {
+  Component,
+  computed,
+  input,
+  output,
+  ViewEncapsulation,
+} from "@angular/core";
 import { PlayerUI } from "../../pages/page-live/feed.interface";
 import { PlayerComponent } from "./player/player.component";
 
@@ -11,22 +17,14 @@ export interface BothPlayers {
   selector: "app-players",
   imports: [PlayerComponent],
   template: `
-    <div class="flex justify-between p-4">
+    <div class="app-players">
       @let pw = playerWhite();
       @if (pw) {
-        <app-player
-          class="hover:cursor-pointer"
-          [player]="pw"
-          (click)="camera(pw.color)"
-        ></app-player>
+        <app-player [player]="pw" (click)="camera(pw.color)"></app-player>
       }
       @let pb = playerBlack();
       @if (pb) {
-        <app-player
-          class="hover:cursor-pointer"
-          [player]="pb"
-          (click)="camera(pb.color)"
-        ></app-player>
+        <app-player [player]="pb" (click)="camera(pb.color)"></app-player>
       }
     </div>
   `,
