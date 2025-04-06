@@ -1,5 +1,14 @@
 @defer {
-  <div class="flex gap-4 p-4">
+  <div class="live-ui">
+    <section class="chesspop-field">
+      <div class="chessfield-wrap" #chessfield></div>
+
+      <app-players
+        [players]="playersComputed()"
+        (emitCameraCol)="updateCamera($event)"
+      ></app-players>
+    </section>
+
     <aside class="sidebar">
       <header>
         <p><small>Select a channel. Wait for next move.</small></p>
@@ -19,38 +28,6 @@
         <strong>Grab some pop 🍿 Enjoy the&nbsp;show!</strong>
       </footer>
     </aside>
-
-    <section class="chesspop-field">
-      <header>
-        <app-players
-          [players]="playersComputed()"
-          (emitCameraCol)="updateCamera($event)"
-        ></app-players>
-      </header>
-
-      <main>
-        <div class="chessfield-wrap" #chessfield></div>
-      </main>
-
-      <footer></footer>
-    </section>
-  </div>
-} @placeholder (minimum 1s) {
-  <div class="flex gap-4 p-4">
-    <aside class="sidebar">...</aside>
-
-    <section class="chesspop-field">
-      <header>
-        <app-players
-          [players]="playersComputed()"
-          (emitCameraCol)="updateCamera($event)"
-        ></app-players>
-      </header>
-
-      <main>
-        <div class="chessfield-wrap" #chessfield></div>
-      </main>
-    </section>
   </div>
 } @loading (minimum 1s; after 500ms) {
   <p>Loading ChessPop.</p>
