@@ -9,6 +9,7 @@ import {
   PLATFORM_ID,
   signal,
   viewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -38,7 +39,8 @@ import { LiveService } from "./live.service";
   standalone: true,
   imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent],
   templateUrl: "live.component.html",
-  styleUrls: ["../pages.common.scss", "./live.component.scss"],
+  styleUrls: ["./live.component.css"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class LiveComponent implements OnInit, OnDestroy {
   title = "chessfield-tv";
