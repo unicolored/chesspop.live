@@ -1,6 +1,6 @@
 {
   "name": "chesspop.live",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "scripts": {
     "check": "npx prettier --check ./src",
     "format": "npx prettier -w ./src",
@@ -29,7 +29,7 @@
     "@fortawesome/sharp-duotone-solid-svg-icons": "^6.7.1",
     "@tailwindcss/postcss": "^4.0.14",
     "@tailwindcss/typography": "^0.5.16",
-    "chessfield": "^1.7.0",
+    "chessfield": "^1.8.0",
     "chessground": "^9.1.1",
     "daisyui": "^5.0.3",
     "express": "^4.18.2",
