@@ -8,7 +8,7 @@ section.chesspop-field {
   @apply flex flex-col;
 
   .chessfield-wrap {
-    @apply mx-auto flex h-[72vh] w-full lg:w-[80vw];
+    @apply mx-auto flex h-[65vh] w-full lg:w-[80vw];
   }
 
   .app-players {
