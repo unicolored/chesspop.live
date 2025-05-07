@@ -14,7 +14,7 @@ section.chesspop-field {
   .app-players {
     @apply flex flex-col gap-2 p-2 md:flex-row md:justify-around;
     .app-player {
-      @apply flex w-full cursor-pointer justify-between gap-2 bg-orange-50 px-2 py-3 text-wrap hover:bg-orange-100;
+      @apply flex w-full cursor-pointer justify-between gap-2 px-2 py-3 text-wrap;
     }
   }
 }
