@@ -26,7 +26,7 @@ aside.sidebar {
     @apply flex flex-col;
 
     button {
-      @apply cursor-pointer p-2 text-left font-bold uppercase hover:bg-orange-100;
+      @apply cursor-pointer p-2 text-left font-bold uppercase hover:bg-red-800 hover:text-white;
 
       &.active {
         @apply bg-red-800 text-white;
