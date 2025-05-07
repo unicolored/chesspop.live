@@ -20,7 +20,7 @@ import { faChessKing } from "@fortawesome/sharp-duotone-solid-svg-icons";
         @if (p().title) {
           <span class="btn btn-ghost px-1 font-mono">{{ p().title }}</span>
         } @else {
-          <span class="btn btn-ghost px-1 font-mono text-white">OO</span>
+          <span class="btn btn-ghost px-1 font-mono">&nbsp;</span>
         }
       </div>
 
