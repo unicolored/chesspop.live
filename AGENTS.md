@@ -7,35 +7,39 @@
 - **Styling**: TailwindCSS + DaisyUI
 - **Testing**: Karma + Jasmine
 - **Build**: Angular CLI
+- **Package Manager**: Yarn (v4.9.1)
+
+> **Note**: This project uses Yarn instead of npm. Run commands with `yarn` instead of `npm`.
 
 ## Commands
 
 ### Development
 
 ```bash
-npm start          # Start dev server on http://localhost:4200
-npm run watch      # Build in watch mode
+yarn start          # Start dev server on http://localhost:4200
+yarn watch          # Build in watch mode
 ```
 
 ### Building
 
 ```bash
-npm run build      # Development build
-npm run prod       # Production build to dist/app/browser
-npm run deploy     # Build + deploy to GitHub Pages (ngh)
+yarn build          # Development build
+yarn prod           # Production build to dist/app/browser
+yarn deploy         # Build + deploy to GitHub Pages (ngh)
+yarn deploy:cf      # Build + deploy to Cloudflare Pages
 ```
 
 ### Testing
 
 ```bash
-npm test           # Run all tests (watch mode)
-npm test -- --no-watch --browsers=ChromeHeadless  # Single run
+yarn test           # Run all tests (watch mode)
+yarn test -- --no-watch --browsers=ChromeHeadless  # Single run
 ```
 
 To run a **single test file**, use:
 
 ```bash
-npm test -- --include="**/theme.service.spec.ts"
+yarn test -- --include="**/theme.service.spec.ts"
 ```
 
 To run a **single test**, use `.only`:
@@ -47,8 +51,8 @@ it('should create', () => { ... })  // Add .only temporarily
 ### Code Quality
 
 ```bash
-npm run check      # Check formatting with Prettier
-npm run format     # Auto-format code with Prettier
+yarn check      # Check formatting with Prettier
+yarn format     # Auto-format code with Prettier
 ```
 
 ---

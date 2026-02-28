@@ -6,6 +6,7 @@
     "format": "npx prettier -w ./src",
     "prod": "ng build --configuration production --base-href \"/\"",
     "deploy": "ngh --dir=dist/app/browser",
+    "deploy:cf": "yarn prod && yarn dlx wrangler pages deploy dist/app/browser",
     "ng": "ng",
     "start": "ng serve chesspop.live --no-hmr",
     "build": "ng build",
@@ -55,7 +56,8 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "wrangler": "^4.69.0"
   },
   "packageManager": "yarn@4.9.1"
 }
