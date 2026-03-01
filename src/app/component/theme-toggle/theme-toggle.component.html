@@ -1,16 +1,13 @@
 <button (click)="toggleSounds()" class="btn btn-circle">
   @if (themeService.isSoundsOn()) {
-    <fa-duotone-icon
-      title="Turn sounds ON"
-      [icon]="soundsOn"
-      [fixedWidth]="true"
-    ></fa-duotone-icon>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Turn sounds ON">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+    </svg>
   } @else {
-    <fa-duotone-icon
-      title="Turn sounds OFF"
-      [icon]="soundsOff"
-      [fixedWidth]="true"
-    ></fa-duotone-icon>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Turn sounds OFF">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+    </svg>
   }
 </button>
 
@@ -18,16 +15,12 @@
 
 <button (click)="toggleMode()" class="btn btn-circle">
   @if (themeService.isDarkMode()) {
-    <fa-duotone-icon
-      title="Turn light on"
-      [icon]="dark"
-      [fixedWidth]="true"
-    ></fa-duotone-icon>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Turn light on">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
   } @else {
-    <fa-duotone-icon
-      title="Turn light off"
-      [icon]="light"
-      [fixedWidth]="true"
-    ></fa-duotone-icon>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Turn light off">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    </svg>
   }
 </button>
