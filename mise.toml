@@ -1,0 +1,10 @@
+[tools]
+"npm:@angular/cli" = "20"
+
+[tasks.build]
+description = "Build the app"
+run = "ng build --configuration production"
+
+[tasks.deploy]
+description = "Deploy the app"
+run = "wrangler pages deploy"

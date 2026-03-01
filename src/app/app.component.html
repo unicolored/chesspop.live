@@ -1,14 +1,20 @@
 <div class="navbar bg-base-100 shadow-sm">
   <div class="navbar-start">
     <a class="btn btn-ghost border-0 text-xl" href="/">
-      <fa-duotone-icon
-        [icon]="faPopcorn"
-        [fixedWidth]="true"
-        [animation]="streamService.isLoading() ? 'bounce' : undefined"
-        primaryColor="#d40c0c"
-        secondaryColor="#e9e921"
-        secondaryOpacity="1"
-      ></fa-duotone-icon>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M11.949 2.417a.75.75 0 01.298.599v16.836a.75.75 0 01-1.496.075l-4.05-6.304a.75.75 0 01.598-.9h7.652a.75.75 0 01.598.9l-4.05 6.304a.75.75 0 01-1.496-.075V3.016a.75.75 0 01.298-.599z"
+        />
+      </svg>
       ChessPop Live
     </a>
     <ul class="menu menu-horizontal px-1">
