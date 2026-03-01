@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-- **Framework**: Angular 19 with standalone components
+- **Framework**: Angular 20 with standalone components
 - **Language**: TypeScript (strict mode enabled)
 - **Styling**: TailwindCSS + DaisyUI
 - **Testing**: Karma + Jasmine
@@ -61,7 +61,7 @@ yarn format     # Auto-format code with Prettier
 
 ### General
 
-- Use **Angular 19 standalone components** (no NgModules unless required)
+- Use **Angular 20 standalone components** (no NgModules unless required)
 - Enable **strict mode** in TypeScript (`strict: true`)
 - Use **signals** for component state (`signal()`, `computed()`, `effect()`)
 
@@ -91,7 +91,6 @@ yarn format     # Auto-format code with Prettier
 
 - Use **strict template type checking**
 - Avoid template type guessing
-- Use **control flow syntax** (`@if`, `@for`) over `*ngIf`, `*ngFor`
 
 ### Error Handling
 
@@ -145,6 +144,58 @@ ngOnDestroy() {
 
 ---
 
+## Angular Best Practices
+
+### TypeScript
+
+- **Strict Type Checking**: Enable and adhere to strict type checking
+- **Type Inference**: Let TypeScript infer types when obvious; avoid explicit types for simple assignments
+- **Avoid `any`**: Use `unknown` when type is uncertain and must be handled safely
+
+### Standalone Components
+
+- Use standalone components, directives, and pipes. No `NgModules` for new features
+- **Implicit Standalone**: Don't set `standalone: true` explicitly - it's the default
+- Use **Signals** for reactive state management
+- Implement **lazy loading** for feature routes
+- Use **NgOptimizedImage** for static images
+- Use `host` object in `@Component`/`@Directive` instead of `@HostBinding`/`@HostListener`
+
+### Components
+
+- **Single Responsibility**: Keep components small and focused
+- **`input()` / `output()` Functions**: Prefer over `@Input()`/`@Output()` decorators
+  ```typescript
+  userId = input<string>("");
+  userSelected = output<string>();
+  ```
+- **`computed()`**: Use for derived state based on signals
+- **ChangeDetectionStrategy.OnPush**: Always use for performance
+- **Inline Templates**: Prefer for small components
+- **Reactive Forms**: Prefer over Template-driven forms for complex forms
+- **No `ngClass` / `ngStyle`**: Use native `[class.xxx]` and `[style.xxx]` bindings instead
+
+### State Management
+
+- Use signals for local component state
+- Use `computed()` for derived state
+- State transformations should be pure functions (no side effects)
+- **No `mutate` on signals** - use `update` or `set` instead
+
+### Templates
+
+- Keep templates simple - delegate complex logic to TypeScript
+- Use **native control flow** (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
+- Use **async pipe** for observables to prevent memory leaks
+
+### Services
+
+- Single, well-defined responsibility
+- Use `providedIn: 'root'` for singleton, tree-shakable services
+- Prefer **`inject()` function** over constructor injection
+
+---
+
 ## Project Structure
 
 ```
@@ -162,7 +213,7 @@ src/
 
 ## Key Dependencies
 
-- `@angular/core` (v19)
+- `@angular/core` (v20)
 - `chessfield` - 3D chess visualization
 - `chessground` - Chess UI library
 - `daisyui` - TailwindCSS component library
