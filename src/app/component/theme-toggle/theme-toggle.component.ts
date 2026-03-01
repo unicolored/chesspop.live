@@ -1,11 +1,11 @@
 import { Component, inject, PLATFORM_ID, OnInit } from "@angular/core";
 import { ThemeService } from "../../service/theme.service";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { AudioService } from "../../service/audio.service";
 
 @Component({
   selector: "app-theme-toggle",
-  imports: [CommonModule],
+  imports: [],
   templateUrl: "./theme-toggle.component.html",
   styleUrl: "./theme-toggle.component.css",
 })
