@@ -14,7 +14,7 @@ import { AudioService } from "./audio.service";
 })
 export class ThemeService {
   audioService = inject(AudioService);
-  private darkMode = signal<boolean>(false);
+  private darkMode = signal<boolean>(true);
   isDarkMode = computed<boolean>(() => this.darkMode());
   private soundsOn = signal<boolean>(false);
   isSoundsOn = computed<boolean>(() => this.soundsOn());
@@ -31,7 +31,7 @@ export class ThemeService {
       // ).matches;
       // this.darkMode.set(prefersDark);
 
-      const darkMode = localStorage.getItem("darkMode") ?? "light";
+      const darkMode = localStorage.getItem("darkMode") ?? "dark";
       this.darkMode.set(darkMode === "dark");
     }
 

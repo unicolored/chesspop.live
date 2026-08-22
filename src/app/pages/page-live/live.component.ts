@@ -226,6 +226,7 @@ export class LiveComponent implements OnInit, OnDestroy {
         theme: "chesspop",
         camera: "white",
         angle: "right",
+        mode: this.themeService.isDarkMode() ? "dark" : "light",
       });
     }
   }

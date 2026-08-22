@@ -3,8 +3,8 @@
 @plugin "daisyui" {
   default: true; /* set as default */
   themes:
-    light --default,
-    dark --prefersdark;
+    dark --default --prefersdark,
+    light;
   root: ":root";
   /*include:;*/
   /*exclude:;*/
