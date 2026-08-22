@@ -1,0 +1,9 @@
+#! /bin/bash
+#MISE description="Test"
+#MISE alias="t"
+
+set -e
+
+npx prettier --check ./src
+
+echo "✅ Tests completed"
