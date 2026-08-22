@@ -30,7 +30,7 @@ export class ThemeToggleComponent implements OnInit {
   ngOnInit() {
     const isBrowser = isPlatformBrowser(this.platformID);
     if (isBrowser) {
-      const darkMode = localStorage.getItem("darkMode") ?? "light";
+      const darkMode = localStorage.getItem("darkMode") ?? "dark";
       const isDarkMode = darkMode === "dark";
 
       this.setDarkMode(isDarkMode);
