@@ -6,7 +6,7 @@
     "deploy": "mise run deploy",
     "ng": "ng",
     "start": "ng serve chesspop.live --no-hmr",
-    "build": "mise run build",
+    "build": "ng build --configuration production && mv dist/app/browser/index.csr.html dist/app/browser/index.html",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:chesspop.live": "node dist/app/server/server.mjs"
