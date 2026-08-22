@@ -1,6 +1,6 @@
 [tools]
 node = "24.19.0"
-"npm:@angular/cli" = "20"
+"npm:@angular/cli" = "22"
 
 [tasks.build]
 description = "Build the app"

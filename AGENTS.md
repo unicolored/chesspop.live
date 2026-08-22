@@ -16,7 +16,7 @@ Chessfield is **GPL-3.0**. This app is a combined work — do not add dependenci
 
 | Piece | This repo |
 |-------|-----------|
-| App | Angular 20, standalone components, TypeScript `strict` + `strictTemplates` |
+| App | Angular 22, standalone components, TypeScript `strict` + `strictTemplates` |
 | Package manager | **Yarn 4.18** (Berry, `nodeLinker: node-modules`). Never npm/pnpm. |
 | Node | `24.19.0` via mise |
 | UI | Tailwind CSS 4 + DaisyUI 5 (`light` / `dark`) |

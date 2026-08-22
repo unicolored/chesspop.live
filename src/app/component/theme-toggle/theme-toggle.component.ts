@@ -1,4 +1,10 @@
-import { Component, inject, PLATFORM_ID, OnInit } from "@angular/core";
+import {
+  Component,
+  inject,
+  PLATFORM_ID,
+  OnInit,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ThemeService } from "../../service/theme.service";
 import { isPlatformBrowser } from "@angular/common";
 import { AudioService } from "../../service/audio.service";
@@ -7,6 +13,7 @@ import { AudioService } from "../../service/audio.service";
   selector: "app-theme-toggle",
   imports: [],
   templateUrl: "./theme-toggle.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./theme-toggle.component.css",
 })
 export class ThemeToggleComponent implements OnInit {

@@ -4,6 +4,7 @@ import {
   input,
   output,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { PlayerUI } from "../../pages/page-live/feed.interface";
 import { PlayerComponent } from "./player/player.component";
@@ -16,6 +17,7 @@ export interface BothPlayers {
 @Component({
   selector: "app-players",
   imports: [PlayerComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="app-players">
       @let pw = playerWhite();

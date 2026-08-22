@@ -1,9 +1,16 @@
-import { Component, computed, input, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { PlayerUI } from "../../../pages/page-live/feed.interface";
 
 @Component({
   selector: "app-player",
   imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="app-player">
       <div class="badge">

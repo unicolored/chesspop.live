@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import * as cg from "chessground/types";
 
 @Component({
   selector: "app-widget",
   imports: [],
   templateUrl: "./widget.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./widget.component.css",
 })
 export class WidgetComponent {

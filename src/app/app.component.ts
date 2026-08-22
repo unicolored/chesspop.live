@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { ThemeService } from "./service/theme.service";
 import { ThemeToggleComponent } from "./component/theme-toggle/theme-toggle.component";
@@ -9,6 +9,7 @@ import { StreamService } from "./service/stream.service";
   imports: [RouterOutlet, ThemeToggleComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [ThemeService],
 })
 export class AppComponent {
