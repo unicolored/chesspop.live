@@ -20,6 +20,7 @@ Chessfield is **GPL-3.0**. This app is a combined work — do not add dependenci
 | Package manager | **Yarn 4.18** (Berry, `nodeLinker: node-modules`). Never npm/pnpm. |
 | Node | `24.19.0` via mise |
 | UI | Tailwind CSS 4 + DaisyUI 5 (`light` / `dark`) |
+| Icons | `@lucide/angular` (ISC). Per-icon standalone components. |
 | 3D board | `chessfield` (`setFen`, `configUpdate`). `chessground` is a **types** dependency of Chessfield, not a board we mount. |
 | Live data | Browser `fetch` of Lichess TV **NDJSON** |
 | SSR | `@angular/ssr` + Express (`src/server.ts`). Prerender is on. WebGL, streams, `document`, `localStorage`, and `AudioContext` are browser-only. |
@@ -87,6 +88,8 @@ mise.toml                    # Node, ng, build, deploy
 | Theme / sound | `theme.service.ts`, `theme-toggle/`, `audio.service.ts`, `styles.css` |
 | New page | `app.routes.ts` + `pages/<name>/`. Lazy `loadComponent` like existing routes. |
 | Shell / nav | `app.component.html` |
+| Icons | `@lucide/angular` per-icon import in the host component. Do not inline SVGs. |
+| Brand popcorn icon | `LucidePopcorn` in `app.component` (navbar, `h-6 w-6`) and `about.component` (`h-8 w-8`) |
 | Prod analytics / third-party scripts | `src/index-production.html` only, not `index.html` |
 
 ## Runtime contracts
@@ -135,6 +138,26 @@ This app's board theme plugin is `chesspop` (cream / red / gold), default camera
 - Preference: `localStorage.darkMode` (`"dark"` | `"light"`).
 - Sound starts **off**. `AudioService` is a tiny oscillator; `initSounds(true)` creates `AudioContext`. `playSound` no-ops until that exists.
 
+### Icons
+
+All UI icons are Lucide via [`@lucide/angular`](https://lucide.dev/guide/packages/angular) (ISC, combinable with this app’s GPL combined work). Import the per-icon standalone component into the host `imports` array and put the selector on an `<svg>`:
+
+```html
+<svg lucidePopcorn class="h-6 w-6"></svg>
+```
+
+```ts
+import { LucidePopcorn } from "@lucide/angular";
+```
+
+- Brand mark: `LucidePopcorn` — navbar `h-6 w-6`, About `h-8 w-8`.
+- Theme toggle: `LucideVolume2` / `LucideVolumeX`, `LucideSun` / `LucideMoon`.
+- Player badge: `LucideChessKing` for both. White sits on a light disc (`bg-white`), black on a dark disc (`bg-neutral-950`), so piece color is obvious in either theme.
+- Size with Tailwind. Color is `currentColor` (follows light/dark).
+- Lucide sets `aria-hidden="true"` unless you pass `title`. Leave `title` off the popcorn mark (adjacent text is the name). Use `title` on icon-only controls (theme toggle, player color).
+- Do not inline Lucide SVGs. Do not add `lucide` or the legacy `lucide-angular` package.
+- The Twemoji raster under `public/popcorn-favicon/` is the favicon source, not this mark.
+
 ### Stream service
 
 `StreamService` is a process-wide singleton with one `isStreaming` flag and one `reader`.
@@ -178,9 +201,10 @@ When you touch `live.component.ts` or `stream.service.ts`, fix lifecycle in that
 
 ## Verify
 
-- After UI or stream changes: `yarn start` if it is not already running, then hit `/` and `/about` on port 4200. Switch channels, toggle theme and sound, drag the board.
+Live browser checks are **optional**. Do not open Playwright, Chromium, or other browser automation unless the user asks. Do not stall a change on clicking through `/` and `/about`.
+
 - `yarn check` (or `yarn format`) on `src/` you edited.
-- `yarn build` before claiming production is fine. Chessfield/WebGL will not fully exercise under SSR — confirm the browser bundle, not only the prerendered HTML.
+- `yarn build` before claiming production is fine. Chessfield/WebGL will not fully exercise under SSR — the browser bundle is enough.
 - Do not add tests that freeze the old `chessfield-live` title or “Hello, …” copy.
 
 ## Do not
@@ -192,3 +216,5 @@ When you touch `live.component.ts` or `stream.service.ts`, fix lifecycle in that
 - Deploy, retag, or run git-flow release scripts unless the user asked.
 - Expand `pages/widget/` as a side playground. Either route it as a real feature or leave it alone.
 - Add analytics/scripts to `src/index.html` (dev). Production-only extras go in `index-production.html`.
+- Inline Lucide SVGs, or add `lucide` / `lucide-angular`. Use `@lucide/angular` per-icon imports.
+- Run Playwright, Chromium, or other “real-browser” verification unless the user asked.

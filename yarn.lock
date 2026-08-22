@@ -2149,6 +2149,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lucide/angular@npm:^1.33.0":
+  version: 1.33.0
+  resolution: "@lucide/angular@npm:1.33.0"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ">=17.0.0"
+    "@angular/core": ">=17.0.0"
+  checksum: 10c0/3c624c560fcb5342e0b669691a41968e0fca53e5231da37474bd7d286582b0a168cd5f7a65ae992b5cfcfc8360d7cd36e9d296556e3d3b0b9e347da50ce563da
+  languageName: node
+  linkType: hard
+
 "@modelcontextprotocol/sdk@npm:1.30.0":
   version: 1.30.0
   resolution: "@modelcontextprotocol/sdk@npm:1.30.0"
@@ -3900,6 +3912,7 @@ __metadata:
     "@angular/platform-server": "npm:^22.1.3"
     "@angular/router": "npm:^22.1.3"
     "@angular/ssr": "npm:^22.1.5"
+    "@lucide/angular": "npm:^1.33.0"
     "@tailwindcss/postcss": "npm:^4.1.5"
     "@tailwindcss/typography": "npm:^0.5.16"
     "@types/express": "npm:^4.17.17"

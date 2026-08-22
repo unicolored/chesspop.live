@@ -5,13 +5,19 @@ import {
   OnInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import {
+  LucideMoon,
+  LucideSun,
+  LucideVolume2,
+  LucideVolumeX,
+} from "@lucide/angular";
 import { ThemeService } from "../../service/theme.service";
 import { isPlatformBrowser } from "@angular/common";
 import { AudioService } from "../../service/audio.service";
 
 @Component({
   selector: "app-theme-toggle",
-  imports: [],
+  imports: [LucideMoon, LucideSun, LucideVolume2, LucideVolumeX],
   templateUrl: "./theme-toggle.component.html",
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./theme-toggle.component.css",

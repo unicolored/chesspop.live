@@ -1,8 +1,9 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { LucidePopcorn } from "@lucide/angular";
 
 @Component({
   selector: "app-about",
-  imports: [],
+  imports: [LucidePopcorn],
   templateUrl: "./about.component.html",
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./about.component.css",

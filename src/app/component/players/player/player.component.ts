@@ -5,26 +5,31 @@ import {
   ViewEncapsulation,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { LucideChessKing } from "@lucide/angular";
 import { PlayerUI } from "../../../pages/page-live/feed.interface";
 
 @Component({
   selector: "app-player",
-  imports: [],
+  imports: [LucideChessKing],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="app-player">
       <div class="badge">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 text-gray-500 dark:text-gray-500"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          [title]="p().color === 'white' ? 'White' : 'Black'"
+        <span
+          class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-1"
+          [class.bg-white]="isWhite()"
+          [class.text-neutral-800]="isWhite()"
+          [class.ring-neutral-400]="isWhite()"
+          [class.bg-neutral-950]="!isWhite()"
+          [class.text-white]="!isWhite()"
+          [class.ring-neutral-500]="!isWhite()"
         >
-          <path
-            d="M12 2a2 2 0 0 0-2 2v3H8a2 2 0 0 0-2 2v1H4v2h2v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7h2v-2h-2V9a2 2 0 0 0-2-2h-2V4a2 2 0 0 0-2-2zm-2 7v3h-2V9h2zm4 0v3h-2V9h2z"
-          />
-        </svg>
+          <svg
+            lucideChessKing
+            class="h-4 w-4"
+            [title]="isWhite() ? 'White' : 'Black'"
+          ></svg>
+        </span>
 
         @if (p().title) {
           <span class="btn btn-ghost px-1 font-mono">{{ p().title }}</span>
@@ -44,4 +49,5 @@ import { PlayerUI } from "../../../pages/page-live/feed.interface";
 export class PlayerComponent {
   player = input.required<Partial<PlayerUI>>();
   p = computed(() => this.player());
+  isWhite = computed(() => this.p().color === "white");
 }
