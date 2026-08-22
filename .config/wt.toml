@@ -106,7 +106,7 @@ test = "yarn test"
 build = "mise run build"
 
 [post-start]
-server = "ng serve --port {{ hash_port }}"
+server = "ng serve --port {{ branch | hash_port }}"
 
 [post-create]
 deps = "yarn install"

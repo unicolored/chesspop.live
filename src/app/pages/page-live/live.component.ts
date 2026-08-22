@@ -10,6 +10,7 @@ import {
   signal,
   viewChild,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -40,6 +41,7 @@ import { LiveService } from "./live.service";
   imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent],
   templateUrl: "live.component.html",
   styleUrls: ["./live.component.css"],
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class LiveComponent implements OnInit, OnDestroy {
