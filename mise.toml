@@ -4,7 +4,10 @@ node = "24.19.0"
 
 [tasks.build]
 description = "Build the app"
-run = "ng build --configuration production"
+run = [
+  "ng build --configuration production",
+  "mv dist/app/browser/index.csr.html dist/app/browser/index.html",
+]
 
 [tasks.deploy]
 description = "Deploy the app"

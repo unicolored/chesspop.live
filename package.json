@@ -1,6 +1,5 @@
 {
-  "name": "chesspop.live",
-  "version": "1.4.0",
+  "name": "unicolored/chesspop.live",
   "scripts": {
     "check": "npx prettier --check ./src",
     "format": "npx prettier -w ./src",
