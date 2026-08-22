@@ -1,4 +1,5 @@
 [tools]
+node = "24.19.0"
 "npm:@angular/cli" = "20"
 
 [tasks.build]
