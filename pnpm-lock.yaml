@@ -49,7 +49,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       chessfield:
         specifier: file:/home/unic/Projects/OPEN/chessfield
-        version: file:../chessfield(@lichess-org/chessground@10.4.2)(three@0.186.1)
+        version: file:../chessfield(@lichess-org/chessground@10.4.2)(rxjs@7.8.2)(three@0.186.1)
       daisyui:
         specifier: ^5.0.35
         version: 5.7.50
@@ -68,9 +68,6 @@ importers:
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
-      zone.js:
-        specifier: ~0.15.0
-        version: 0.15.1
     devDependencies:
       '@angular/build':
         specifier: ^22.1.5
@@ -1837,8 +1834,9 @@ packages:
     resolution: {directory: ../chessfield, type: directory}
     engines: {node: '>=24', pnpm: '>=12'}
     peerDependencies:
-      '@lichess-org/chessground': '>=10.0.0'
-      three: '>=0.186.0'
+      '@lichess-org/chessground': '>=10.2.0'
+      rxjs: '>=7.8.0'
+      three: '>=0.186.1'
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -5081,9 +5079,10 @@ snapshots:
 
   chardet@2.2.0: {}
 
-  chessfield@file:../chessfield(@lichess-org/chessground@10.4.2)(three@0.186.1):
+  chessfield@file:../chessfield(@lichess-org/chessground@10.4.2)(rxjs@7.8.2)(three@0.186.1):
     dependencies:
       '@lichess-org/chessground': 10.4.2
+      rxjs: 7.8.2
       three: 0.186.1
 
   chokidar@3.6.0:
@@ -6850,4 +6849,5 @@ snapshots:
 
   zod@4.6.7: {}
 
-  zone.js@0.15.1: {}
+  zone.js@0.15.1:
+    optional: true

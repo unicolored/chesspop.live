@@ -10,7 +10,7 @@ import { StreamService } from "./service/stream.service";
   imports: [RouterOutlet, ThemeToggleComponent, LucidePopcorn],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ThemeService],
 })
 export class AppComponent {
