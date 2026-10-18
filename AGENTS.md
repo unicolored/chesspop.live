@@ -17,7 +17,7 @@ Chessfield is **GPL-3.0**. This app is a combined work — do not add dependenci
 | Piece | This repo |
 |-------|-----------|
 | App | Angular 22, standalone components, TypeScript `strict` + `strictTemplates` |
-| Package manager | **Yarn 4.18** (Berry, `nodeLinker: node-modules`). Never npm/pnpm. |
+| Package manager | **pnpm 9.15** (default node_modules linker). |
 | Node | `24.19.0` via mise |
 | UI | Tailwind CSS 4 + DaisyUI 5 (`light` / `dark`) |
 | Icons | `@lucide/angular` (ISC). Per-icon standalone components. |
@@ -33,21 +33,21 @@ Angular CLI project name: `chesspop.live`. Dev server: host `0.0.0.0`, port `420
 ## Commands
 
 ```bash
-yarn start          # ng serve on http://localhost:4200 (0.0.0.0, no HMR)
-yarn watch          # ng build --watch --configuration development
-yarn test           # Karma (watch). Headless once:
-                    #   yarn test -- --no-watch --browsers=ChromeHeadless
+pnpm start          # ng serve on http://localhost:4200 (0.0.0.0, no HMR)
+pnpm watch          # ng build --watch --configuration development
+pnpm test           # Karma (watch). Headless once:
+                    #   pnpm test -- --no-watch --browsers=ChromeHeadless
                     # One file:
-                    #   yarn test -- --include="**/theme.service.spec.ts"
-yarn check          # Prettier check ./src
-yarn format         # Prettier write ./src
-yarn build          # mise → ng build --configuration production → dist/app/browser
-yarn deploy         # mise → wrangler pages deploy (does NOT build; run yarn build first)
+                    #   pnpm test -- --include="**/theme.service.spec.ts"
+pnpm check          # Prettier check ./src
+pnpm format         # Prettier write ./src
+pnpm build          # mise → ng build --configuration production → dist/app/browser
+pnpm deploy         # mise → wrangler pages deploy (does NOT build; run pnpm build first)
 ```
 
-There is no `yarn prod` and no GitHub Pages (`ngh`) deploy. `script/cibuild.sh` still calls `yarn prod` — treat that script as stale.
+There is no `pnpm prod` and no GitHub Pages (`ngh`) deploy. `script/cibuild.sh` still calls `yarn prod` — treat that script as stale.
 
-Do not run `yarn deploy` or `script/release.sh` unless the user asked. Release script assumes git-flow branches (`next` / `main`) that may not match the current `develop` checkout.
+Do not run `pnpm deploy` or `script/release.sh` unless the user asked. Release script assumes git-flow branches (`next` / `main`) that may not match the current `develop` checkout.
 
 ## Layout
 
@@ -203,13 +203,13 @@ When you touch `live.component.ts` or `stream.service.ts`, fix lifecycle in that
 
 Live browser checks are **optional**. Do not open Playwright, Chromium, or other browser automation unless the user asks. Do not stall a change on clicking through `/` and `/about`.
 
-- `yarn check` (or `yarn format`) on `src/` you edited.
-- `yarn build` before claiming production is fine. Chessfield/WebGL will not fully exercise under SSR — the browser bundle is enough.
-- Do not add tests that freeze the old `chessfield-live` title or “Hello, …” copy.
+- `pnpm check` (or `pnpm format`) on `src/` you edited.
+- `pnpm build` before claiming production is fine. Chessfield/WebGL will not fully exercise under SSR — the browser bundle is enough.
+- Do not add tests that freeze the old `chessfield-live` title or "Hello, …" copy.
 
 ## Do not
 
-- Install with npm/pnpm or change `packageManager` without being asked.
+- Install with npm or change `packageManager` without being asked.
 - Commit `console.log`, leftover `standalone: true` debates, or new NgModules.
 - Edit `node_modules/chessfield`. Change app usage or bump the package.
 - Put Lichess fetches or `new Chessfield` in constructors that run on the server.
@@ -217,4 +217,4 @@ Live browser checks are **optional**. Do not open Playwright, Chromium, or other
 - Expand `pages/widget/` as a side playground. Either route it as a real feature or leave it alone.
 - Add analytics/scripts to `src/index.html` (dev). Production-only extras go in `index-production.html`.
 - Inline Lucide SVGs, or add `lucide` / `lucide-angular`. Use `@lucide/angular` per-icon imports.
-- Run Playwright, Chromium, or other “real-browser” verification unless the user asked.
+- Run Playwright, Chromium, or other "real-browser" verification unless the user asked.
