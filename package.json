@@ -4,7 +4,7 @@
     "format": "npx prettier -w ./src",
     "deploy": "mise run deploy",
     "ng": "ng",
-    "start": "ng serve chesspop.live --no-hmr",
+    "dev": "ng serve chesspop.live --no-hmr --ssl --ssl-cert localhost.pem --ssl-key localhost-key.pem",
     "build": "ng build --configuration production && mv dist/app/browser/index.csr.html dist/app/browser/index.html",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
