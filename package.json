@@ -1,7 +1,11 @@
 {
   "scripts": {
     "check": "npx prettier --check ./src",
-    "format": "npx prettier -w ./src",
+    "formatPrettier": "npx prettier -w ./src",
+    "format": "oxfmt",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "check-format": "oxfmt --check",
     "deploy": "mise run deploy",
     "ng": "ng",
     "dev": "ng serve chesspop.live --no-hmr --ssl --ssl-cert localhost.pem --ssl-key localhost-key.pem",
