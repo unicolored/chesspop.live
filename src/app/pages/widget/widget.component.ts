@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import * as cg from "chessground/types";
+import * as cg from "@lichess-org/chessground/types";
 
 @Component({
   selector: "app-widget",

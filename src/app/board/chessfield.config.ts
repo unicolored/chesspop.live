@@ -1,5 +1,5 @@
-import * as cg from "./chessfield.types";
-import { Config } from "chessground/config";
+import * as cg from "@lichess-org/chessground/types";
+import { Config } from "@lichess-org/chessground/config";
 
 export interface ChessfieldConfig extends Config {
   fen?: cg.FEN; // chess position in Forsyth notation

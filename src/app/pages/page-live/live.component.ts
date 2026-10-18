@@ -24,7 +24,7 @@ import {
   takeUntil,
 } from "rxjs";
 import { Chessfield } from "chessfield";
-import * as cg from "chessground/types";
+import * as cg from "@lichess-org/chessground/types";
 import { StreamService } from "../../service/stream.service";
 import { isPlatformBrowser } from "@angular/common";
 import { Player } from "../../board/lichess.interface";
@@ -219,6 +219,7 @@ export class LiveComponent implements OnInit, OnDestroy {
               light: "#e3dbc9",
               dark: "#cb4444",
               highlight: "#c99a39",
+              highlightStatusMate: "#ff0000",
               selected: "orange",
             },
           },
