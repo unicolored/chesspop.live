@@ -54,8 +54,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       chessfield:
-        specifier: file:/home/unic/Projects/OPEN/chessfield
-        version: file:../chessfield(@lichess-org/chessground@10.4.2)(three@0.186.1)
+        specifier: ^2.2.1
+        version: 2.2.1(@lichess-org/chessground@10.4.2)(three@0.186.1)
       daisyui:
         specifier: ^5.7.50
         version: 5.7.50
@@ -1751,8 +1751,8 @@ packages:
   chess.js@1.4.0:
     resolution: {integrity: sha512-BBJgrrtKQOzFLonR0l+k64A98NLemPwNsCskwb+29bRwobUa4iTm51E1kwGPbWXAcfdDa18nad6vpPPKPWarqw==}
 
-  chessfield@file:../chessfield:
-    resolution: {directory: ../chessfield, type: directory}
+  chessfield@2.2.1:
+    resolution: {integrity: sha512-O6Ob9+0ylDH8jLkDCcOZwQXGONto8ODXe76LLqU4m5JJvt9uSynvfrqSy05FwcJP6+eIx9G4CGTdBWwxLWbS4A==}
     engines: {node: '>=24', pnpm: '>=12'}
     peerDependencies:
       '@lichess-org/chessground': '>=10.0.0'
@@ -4725,7 +4725,7 @@ snapshots:
 
   chess.js@1.4.0: {}
 
-  chessfield@file:../chessfield(@lichess-org/chessground@10.4.2)(three@0.186.1):
+  chessfield@2.2.1(@lichess-org/chessground@10.4.2)(three@0.186.1):
     dependencies:
       '@chess-fu/fen-parser': 1.1.4
       '@lichess-org/chessground': 10.4.2
