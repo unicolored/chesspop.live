@@ -16,7 +16,6 @@
             "outputPath": "dist/app",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -55,6 +54,7 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
+              "prerender": false,
               "sourceMap": true
             }
           },
@@ -82,7 +82,6 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {

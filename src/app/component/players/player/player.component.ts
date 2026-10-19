@@ -1,15 +1,10 @@
-import {
-  Component,
-  computed,
-  input,
-  ViewEncapsulation,
-  ChangeDetectionStrategy,
-} from "@angular/core";
-import { LucideChessKing } from "@lucide/angular";
-import { PlayerUI } from "../../../pages/page-live/feed.interface";
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { LucideChessKing } from '@lucide/angular';
+
+import { type PlayerUI } from '../../../pages/page-live/feed.interface';
 
 @Component({
-  selector: "app-player",
+  selector: 'app-player',
   imports: [LucideChessKing],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
@@ -22,13 +17,8 @@ import { PlayerUI } from "../../../pages/page-live/feed.interface";
           [class.ring-neutral-400]="isWhite()"
           [class.bg-neutral-950]="!isWhite()"
           [class.text-white]="!isWhite()"
-          [class.ring-neutral-500]="!isWhite()"
-        >
-          <svg
-            lucideChessKing
-            class="h-4 w-4"
-            [title]="isWhite() ? 'White' : 'Black'"
-          ></svg>
+          [class.ring-neutral-500]="!isWhite()">
+          <svg lucideChessKing class="h-4 w-4" [title]="isWhite() ? 'White' : 'Black'"></svg>
         </span>
 
         @if (p().title) {
@@ -49,5 +39,5 @@ import { PlayerUI } from "../../../pages/page-live/feed.interface";
 export class PlayerComponent {
   player = input.required<Partial<PlayerUI>>();
   p = computed(() => this.player());
-  isWhite = computed(() => this.p().color === "white");
+  isWhite = computed(() => this.p().color === 'white');
 }
