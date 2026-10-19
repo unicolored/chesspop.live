@@ -146,7 +146,7 @@ export class LiveComponent implements OnInit, OnDestroy {
             this.chessjs = null;
 
             if (data) {
-              console.log('feed data', data);
+              // console.log('feed data', data);
 
               if (data.t === 'fen') {
                 this.chessjs = new Chess(data.d.fen);
@@ -311,7 +311,7 @@ export class LiveComponent implements OnInit, OnDestroy {
               light: '#e3dbc9',
               dark: '#cb4444',
               highlight: '#c99a39',
-              highlightStatusMate: '#ff0000',
+              statusCheck: '#ffff00',
               selected: 'orange',
             },
           },
