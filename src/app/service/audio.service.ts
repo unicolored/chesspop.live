@@ -1,14 +1,14 @@
-import { inject, Injectable, PLATFORM_ID } from "@angular/core";
-import { isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AudioService {
   private audioContext: AudioContext | null = null;
   private platformID = inject(PLATFORM_ID);
 
-  initSounds(enable: boolean = false) {
+  initSounds(enable = false) {
     if (enable) {
       if (isPlatformBrowser(this.platformID)) {
         this.audioContext = new window.AudioContext();

@@ -1,5 +1,7 @@
-import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
-import { PlayerUI } from '../../pages/page-live/feed.interface';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+
+import { type PlayerUI } from '../../pages/page-live/feed.interface';
+
 import { PlayerComponent } from './player/player.component';
 
 export interface BothPlayers {

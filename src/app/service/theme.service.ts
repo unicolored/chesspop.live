@@ -1,16 +1,10 @@
-import {
-  computed,
-  effect,
-  inject,
-  Injectable,
-  PLATFORM_ID,
-  signal,
-} from "@angular/core";
-import { isPlatformBrowser } from "@angular/common";
-import { AudioService } from "./audio.service";
+import { isPlatformBrowser } from '@angular/common';
+import { computed, effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+
+import { AudioService } from './audio.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ThemeService {
   audioService = inject(AudioService);
@@ -31,13 +25,13 @@ export class ThemeService {
       // ).matches;
       // this.darkMode.set(prefersDark);
 
-      const darkMode = localStorage.getItem("darkMode") ?? "dark";
-      this.darkMode.set(darkMode === "dark");
+      const darkMode = localStorage.getItem('darkMode') ?? 'dark';
+      this.darkMode.set(darkMode === 'dark');
     }
 
     effect(() => {
       if (isBrowser) {
-        localStorage.setItem("darkMode", this.isDarkMode() ? "dark" : "light");
+        localStorage.setItem('darkMode', this.isDarkMode() ? 'dark' : 'light');
       }
     });
   }

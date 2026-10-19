@@ -3,10 +3,7 @@
     <section class="chesspop-field">
       <div class="chessfield-wrap" #chessfield></div>
 
-      <app-players
-        [players]="playersComputed()"
-        (emitCameraCol)="updateCamera($event)"
-      ></app-players>
+      <app-players [players]="playersComputed()" (emitCameraCol)="updateCamera($event)"></app-players>
     </section>
 
     <aside class="sidebar">
@@ -16,8 +13,7 @@
         @for (liveFeed of liveService.liveList; track liveFeed.url) {
           <button
             [class.active]="this.selectedLiveFeed === liveFeed.feed"
-            (click)="loadChannel(liveFeed.feed)"
-          >
+            (click)="loadChannel(liveFeed.feed)">
             {{ liveFeed.platform }} - {{ liveFeed.type }}
           </button>
         }

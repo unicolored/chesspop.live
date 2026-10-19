@@ -1,6 +1,6 @@
 # ChessPop 🍿 Live
 
-__ChessPop__ is designed to display live games or static FEN in a spectator interactive 3D mode. Take a snack, enjoy!
+**ChessPop** is designed to display live games or static FEN in a spectator interactive 3D mode. Take a snack, enjoy!
 
 I hope it will help online players like me to keep an IRL view and analysis of the chess games.
 Chessfield is connected to live stream data (like [lichess.org/tv](https://lichess.org/tv)).
@@ -9,7 +9,7 @@ Chessfield is connected to live stream data (like [lichess.org/tv](https://liche
 
 - Stream Reader : [browser-ndjson-stream-reader.js](https://gist.github.com/ornicar/a097406810939cf7be1df8ea30e94f3e)
 - DaisyUI: https://github.com/saadeghi/daisyui
-- Popcorn favicon from [favicon.io](https://favicon.io/) 
+- Popcorn favicon from [favicon.io](https://favicon.io/)
 - [Angular CLI](https://github.com/angular/angular-cli)
 - Chessfield: [npm package](https://www.npmjs.com/package/chessfield)
 

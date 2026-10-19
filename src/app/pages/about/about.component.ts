@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { LucidePopcorn } from "@lucide/angular";
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { LucidePopcorn } from '@lucide/angular';
 
 @Component({
-  selector: "app-about",
+  selector: 'app-about',
   imports: [LucidePopcorn],
-  templateUrl: "./about.component.html",
+  templateUrl: './about.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: "./about.component.css",
+  styleUrl: './about.component.css',
 })
 export class AboutComponent {}

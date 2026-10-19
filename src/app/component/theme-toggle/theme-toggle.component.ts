@@ -1,26 +1,15 @@
-import {
-  Component,
-  inject,
-  PLATFORM_ID,
-  OnInit,
-  ChangeDetectionStrategy,
-} from "@angular/core";
-import {
-  LucideMoon,
-  LucideSun,
-  LucideVolume2,
-  LucideVolumeX,
-} from "@lucide/angular";
-import { ThemeService } from "../../service/theme.service";
-import { isPlatformBrowser } from "@angular/common";
-import { AudioService } from "../../service/audio.service";
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, type OnInit, PLATFORM_ID } from '@angular/core';
+import { LucideMoon, LucideSun, LucideVolume2, LucideVolumeX } from '@lucide/angular';
+
+import { ThemeService } from '../../service/theme.service';
 
 @Component({
-  selector: "app-theme-toggle",
+  selector: 'app-theme-toggle',
   imports: [LucideMoon, LucideSun, LucideVolume2, LucideVolumeX],
-  templateUrl: "./theme-toggle.component.html",
+  templateUrl: './theme-toggle.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: "./theme-toggle.component.css",
+  styleUrl: './theme-toggle.component.css',
 })
 export class ThemeToggleComponent implements OnInit {
   themeService = inject(ThemeService);
@@ -30,8 +19,8 @@ export class ThemeToggleComponent implements OnInit {
   ngOnInit() {
     const isBrowser = isPlatformBrowser(this.platformID);
     if (isBrowser) {
-      const darkMode = localStorage.getItem("darkMode") ?? "dark";
-      const isDarkMode = darkMode === "dark";
+      const darkMode = localStorage.getItem('darkMode') ?? 'dark';
+      const isDarkMode = darkMode === 'dark';
 
       this.setDarkMode(isDarkMode);
       this.setSoundsOn(false);
@@ -59,9 +48,9 @@ export class ThemeToggleComponent implements OnInit {
   private updateTheme(dark: boolean) {
     this.isDarkMode = dark;
     if (dark) {
-      document.documentElement.setAttribute("data-theme", "dark");
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
-      document.documentElement.setAttribute("data-theme", "light");
+      document.documentElement.setAttribute('data-theme', 'light');
     }
   }
 }

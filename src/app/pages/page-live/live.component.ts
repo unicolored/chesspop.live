@@ -1,31 +1,33 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
-  ElementRef,
+  type ElementRef,
   inject,
-  OnDestroy,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   PLATFORM_ID,
   signal,
   viewChild,
   ViewEncapsulation,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { LichessTvFeed, LiveFeed, LiveFeedItem } from './feed.interface';
-import { fromEvent, startWith, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
-import { Chessfield, type GameState } from 'chessfield';
-import * as cg from '@lichess-org/chessground/types';
-import { StreamService } from '../../service/stream.service';
-import { isPlatformBrowser } from '@angular/common';
-import { Player } from '../../board/lichess.interface';
-import { BothPlayers, PlayersComponent } from '../../component/players/players.component';
-import { ThemeService } from '../../service/theme.service';
-import { AudioService } from '../../service/audio.service';
-import { LiveService } from './live.service';
+import type * as cg from '@lichess-org/chessground/types';
 import { BLACK, Chess, KING, WHITE } from 'chess.js';
+import { type Angle, type Camera, Chessfield, type ChessfieldConfig, type GameState } from 'chessfield';
+import { fromEvent, startWith, Subject, type Subscription, switchMap, takeUntil } from 'rxjs';
+
+import { type Player } from '../../board/lichess.interface';
+import { type BothPlayers, PlayersComponent } from '../../component/players/players.component';
+import { AudioService } from '../../service/audio.service';
+import { StreamService } from '../../service/stream.service';
+import { ThemeService } from '../../service/theme.service';
+
+import { type LichessTvFeed, type LiveFeed } from './feed.interface';
+import { LiveService } from './live.service';
 
 @Component({
   standalone: true,
@@ -50,7 +52,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   players = signal<Player[] | null>(null);
   playersComputed = computed<BothPlayers>(() => {
     const players = this.players();
-    let result: BothPlayers = {
+    const result: BothPlayers = {
       white: {},
       black: {},
     };
@@ -288,15 +290,12 @@ export class LiveComponent implements OnInit, OnDestroy {
   updateCamera(event: string | undefined) {
     console.log('updateCamera', event);
 
-    const options = {
-      // @ts-ignore
+    const options: ChessfieldConfig = {
       camera: event as Camera,
-      // @ts-ignore
       angle: 'center' as Angle,
       mode: this.themeService.isDarkMode() ? 'dark' : 'light',
     };
 
-    // @ts-ignore
     this.chessfield.configUpdate(options);
   }
 
