@@ -8,8 +8,8 @@
     "check-format": "oxfmt --check",
     "deploy": "mise run deploy",
     "ng": "ng",
-    "dev": "ng serve chesspop.live --no-hmr --ssl --ssl-cert localhost.pem --ssl-key localhost-key.pem",
-    "build": "ng build --configuration production && mv dist/app/browser/index.csr.html dist/app/browser/index.html",
+    "dev": "ng serve chesspop.live --configuration production --no-hmr --ssl --ssl-cert localhost.pem --ssl-key localhost-key.pem",
+    "dist": "ng build --configuration production && mv dist/app/browser/index.csr.html dist/app/browser/index.html",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:chesspop.live": "node dist/app/server/server.mjs"
