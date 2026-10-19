@@ -6,7 +6,7 @@ set -e
 
 DEV_BRANCH="develop"
 PUB_BRANCH="next"
-VERSION_FILE="package.json"
+VERSION_FILE="version.json"
 
 # 1. Check if version.json exists
 if [[ ! -f "$VERSION_FILE" ]]; then
