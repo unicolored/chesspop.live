@@ -1,7 +1,7 @@
-import { LichessStreamData } from "../../board/lichess.interface";
+import { type LichessStreamData } from '../../board/lichess.interface';
 
-export type LivePlatform = "Lichess" | string;
-export type LiveType = "top" | "rapid" | "blitz" | "bullet" | string;
+export type LivePlatform = 'Lichess' | string;
+export type LiveType = 'top' | 'rapid' | 'blitz' | 'bullet' | string;
 export type LiveFeed = `${LivePlatform}-${LiveType}`;
 
 export interface LiveFeedItem {
@@ -12,7 +12,7 @@ export interface LiveFeedItem {
 }
 
 export interface LichessTvFeed {
-  t: "fen" | "featured";
+  t: 'fen' | 'featured';
   d: LichessStreamData;
 }
 
