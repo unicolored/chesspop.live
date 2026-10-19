@@ -180,6 +180,7 @@ export class LiveComponent implements OnInit, OnDestroy {
                         },
                       };
                       this.chessfield.setGameOver(gO);
+                      console.log('Checkmate', gO);
                     } else if (this.chessjs.isDraw()) {
                       // It's a draw - check specific reason
                       console.log('Draw!');
@@ -199,6 +200,7 @@ export class LiveComponent implements OnInit, OnDestroy {
                         },
                       };
                       this.chessfield.setGameOver(gO);
+                      console.log('Draw', gO);
                     }
                   } else if (this.chessjs.isCheck()) {
                     const findCheckKing = this.chessjs.findPiece({ type: KING, color: this.chessjs.turn() });
@@ -212,6 +214,7 @@ export class LiveComponent implements OnInit, OnDestroy {
                     };
 
                     this.chessfield.setCheck(checkState);
+                    console.log('Check', checkState);
                   } else if (data.d.wc === 0 || data.d.bc === 0) {
                     let winner;
                     if (data.d.wc === 0) {
@@ -230,6 +233,7 @@ export class LiveComponent implements OnInit, OnDestroy {
                       },
                     };
                     this.chessfield.setGameOver(gOtime);
+                    console.log('Timeout', gOtime);
                   }
                 }
               }
