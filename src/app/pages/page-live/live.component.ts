@@ -11,41 +11,32 @@ import {
   viewChild,
   ViewEncapsulation,
   ChangeDetectionStrategy,
-} from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
-import { LichessTvFeed, LiveFeed, LiveFeedItem } from "./feed.interface";
-import {
-  fromEvent,
-  startWith,
-  Subject,
-  Subscription,
-  switchMap,
-  takeUntil,
-} from "rxjs";
-import { Chessfield } from "chessfield";
-import * as cg from "@lichess-org/chessground/types";
-import { StreamService } from "../../service/stream.service";
-import { isPlatformBrowser } from "@angular/common";
-import { Player } from "../../board/lichess.interface";
-import {
-  BothPlayers,
-  PlayersComponent,
-} from "../../component/players/players.component";
-import { ThemeService } from "../../service/theme.service";
-import { AudioService } from "../../service/audio.service";
-import { LiveService } from "./live.service";
+} from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { LichessTvFeed, LiveFeed, LiveFeedItem } from './feed.interface';
+import { fromEvent, startWith, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
+import { Chessfield, type GameState } from 'chessfield';
+import * as cg from '@lichess-org/chessground/types';
+import { StreamService } from '../../service/stream.service';
+import { isPlatformBrowser } from '@angular/common';
+import { Player } from '../../board/lichess.interface';
+import { BothPlayers, PlayersComponent } from '../../component/players/players.component';
+import { ThemeService } from '../../service/theme.service';
+import { AudioService } from '../../service/audio.service';
+import { LiveService } from './live.service';
+import { BLACK, Chess, KING, WHITE } from 'chess.js';
 
 @Component({
   standalone: true,
   imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent],
-  templateUrl: "live.component.html",
-  styleUrls: ["./live.component.css"],
+  templateUrl: 'live.component.html',
+  styleUrls: ['./live.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class LiveComponent implements OnInit, OnDestroy {
-  title = "chessfield-tv";
+  title = 'chessfield-tv';
 
   selectedLiveFeed!: LiveFeed;
   isPaused = false;
@@ -54,7 +45,7 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   private subscription!: Subscription;
 
-  chessfieldElement = viewChild<ElementRef>("chessfield");
+  chessfieldElement = viewChild<ElementRef>('chessfield');
 
   players = signal<Player[] | null>(null);
   playersComputed = computed<BothPlayers>(() => {
@@ -64,8 +55,8 @@ export class LiveComponent implements OnInit, OnDestroy {
       black: {},
     };
     if (players) {
-      const playerWhite = players.find((p) => p.color === "white");
-      const playerBlack = players.find((p) => p.color === "black");
+      const playerWhite = players.find(p => p.color === 'white');
+      const playerBlack = players.find(p => p.color === 'black');
 
       if (playerWhite) {
         result.white = {
@@ -91,6 +82,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   });
 
   chessfield!: Chessfield;
+  chessjs!: Chess | null;
   platformID = inject(PLATFORM_ID);
   themeService = inject(ThemeService);
   audioService = inject(AudioService);
@@ -112,7 +104,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     effect(() => {
       const isDarkMode = this.themeService.isDarkMode();
       if (this.canvasElement && this.chessfield) {
-        this.updateCamera(isDarkMode ? "dark" : "light");
+        this.updateCamera(isDarkMode ? 'dark' : 'light');
       }
     });
   }
@@ -132,15 +124,12 @@ export class LiveComponent implements OnInit, OnDestroy {
 
     this.resetFeed();
 
-    console.log(feed);
     const liveFeedItem = this.liveService.getLiveFeedItem(feed);
 
     this.selectedLiveFeed = liveFeedItem.feed;
 
-    console.log(liveFeedItem);
-
     if (isPlatformBrowser(this.platformID)) {
-      const visibility$ = fromEvent(document, "visibilitychange").pipe(
+      const visibility$ = fromEvent(document, 'visibilitychange').pipe(
         takeUntil(this.destroy$), // Cleanup on component destroy
       );
 
@@ -154,27 +143,126 @@ export class LiveComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (data: LichessTvFeed | null) => {
+            this.chessjs = null;
+
             if (data) {
-              if (data.t === "featured") {
+              console.log('feed data', data);
+
+              if (data.t === 'fen') {
+                this.chessjs = new Chess(data.d.fen);
+                // TODO: check fen for state: gameover, check, etc.
+
+                const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
+                if (this.chessfield) {
+                  this.audioService.playSound(133, 'sine', 0.1);
+                  this.chessfield.setFen(data.d.fen, lastMove);
+
+                  if (this.chessjs.isGameOver()) {
+                    if (this.chessjs.isCheckmate()) {
+                      this.audioService.playSound(99, 'sine', 0.1);
+                      // Winner is the OPPOSITE of the side to move (they just got checkmated)
+                      const winner = this.chessjs.turn() === WHITE ? BLACK : WHITE;
+                      // const loser = winner === WHITE ? BLACK : WHITE;
+                      console.log(`Checkmate! Winner: ${winner}`);
+
+                      const findBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK });
+                      const findWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE });
+                      // -> ['e8']
+                      // console.log(`Mate king ${loser} on:`, findMateKing);
+                      // console.log(`Winner king ${winner} on:`, findWinnerKing);
+                      // console.log(`${headers[winner]} wins over ${headers[loser]}`);
+
+                      const gO: GameState = {
+                        winner,
+                        kings: {
+                          white: findWhiteKing.pop(),
+                          black: findBlackKing.pop(),
+                        },
+                      };
+                      this.chessfield.setGameOver(gO);
+                    } else if (this.chessjs.isDraw()) {
+                      // It's a draw - check specific reason
+                      console.log('Draw!');
+                      // console.log(`${headers[WHITE]} draw ${headers[BLACK]}`);
+                      console.log('Stalemate:', this.chessjs.isStalemate());
+                      console.log('Threefold repetition:', this.chessjs.isThreefoldRepetition());
+                      console.log('50-move rule:', this.chessjs.isDrawByFiftyMoves());
+                      console.log('Insufficient material:', this.chessjs.isInsufficientMaterial());
+
+                      const findBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK });
+                      const findWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE });
+
+                      const gO: GameState = {
+                        kings: {
+                          white: findWhiteKing.pop(),
+                          black: findBlackKing.pop(),
+                        },
+                      };
+                      this.chessfield.setGameOver(gO);
+                    }
+                  } else if (this.chessjs.isCheck()) {
+                    const findCheckKing = this.chessjs.findPiece({ type: KING, color: this.chessjs.turn() });
+                    // -> ['e8']
+                    const checkState: GameState = {
+                      status: 'check',
+                      kings: {
+                        white: this.chessjs.turn() === 'w' ? findCheckKing.pop() : undefined,
+                        black: this.chessjs.turn() === 'b' ? findCheckKing.pop() : undefined,
+                      },
+                    };
+
+                    this.chessfield.setCheck(checkState);
+                  } else if (data.d.wc === 0 || data.d.bc === 0) {
+                    let winner;
+                    if (data.d.wc === 0) {
+                      winner = BLACK as 'b';
+                    } else if (data.d.bc === 0) {
+                      winner = WHITE as 'w';
+                    }
+                    const findTimeWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE });
+                    const findTimeBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK });
+                    const gOtime: GameState = {
+                      status: 'timeout',
+                      winner,
+                      kings: {
+                        white: findTimeWhiteKing.pop(),
+                        black: findTimeBlackKing.pop(),
+                      },
+                    };
+                    this.chessfield.setGameOver(gOtime);
+                  }
+                }
+              }
+
+              if (data.t === 'featured') {
                 const players = data.d.players;
                 if (players) {
                   this.players.set(players);
-                }
-              }
-              if (data.t === "fen") {
-                const lastMove = data.d.lm?.match(/.{1,2}/g) as cg.Key[];
-                if (this.chessfield) {
-                  this.audioService.playSound(133, "sine", 0.1);
-                  this.chessfield.setFen(data.d.fen, lastMove);
+
+                  const whitePlayerTitle = this.playersComputed().white.title
+                    ? `${this.playersComputed().white.title} `
+                    : '';
+                  const whitePlayerName = `${whitePlayerTitle}${this.playersComputed().white.name ?? '<pop>'}`;
+                  this.chessjs?.setHeader('White', whitePlayerName);
+                  this.chessjs?.setHeader('WHITE', whitePlayerName);
+
+                  const blackPlayerTitle = this.playersComputed().black.title
+                    ? `${this.playersComputed().black.title} `
+                    : '';
+                  const blackPlayerName = `${blackPlayerTitle}${this.playersComputed().black.name ?? '<pop>'}`;
+                  this.chessjs?.setHeader('Black', blackPlayerName);
+                  this.chessjs?.setHeader('BLACK', blackPlayerName);
+
+                  // chess.setHeader('Date', '1858-??-??');
                 }
               }
             }
           },
-          error: (err) => {
-            console.error("Stream error:", err);
+          error: err => {
+            console.error('Stream error:', err);
           },
           complete: () => {
-            console.log("Stream completed");
+            console.log('Stream completed');
           },
         });
     }
@@ -194,14 +282,14 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   updateCamera(event: string | undefined) {
-    console.log("updateCamera", event);
+    console.log('updateCamera', event);
 
     const options = {
       // @ts-ignore
       camera: event as Camera,
       // @ts-ignore
-      angle: "center" as Angle,
-      mode: this.themeService.isDarkMode() ? "dark" : "light",
+      angle: 'center' as Angle,
+      mode: this.themeService.isDarkMode() ? 'dark' : 'light',
     };
 
     // @ts-ignore
@@ -216,18 +304,18 @@ export class LiveComponent implements OnInit, OnDestroy {
         plugins: {
           themes: {
             chesspop: {
-              light: "#e3dbc9",
-              dark: "#cb4444",
-              highlight: "#c99a39",
-              highlightStatusMate: "#ff0000",
-              selected: "orange",
+              light: '#e3dbc9',
+              dark: '#cb4444',
+              highlight: '#c99a39',
+              highlightStatusMate: '#ff0000',
+              selected: 'orange',
             },
           },
         },
-        theme: "chesspop",
-        camera: "white",
-        angle: "right",
-        mode: this.themeService.isDarkMode() ? "dark" : "light",
+        theme: 'chesspop',
+        camera: 'white',
+        angle: 'right',
+        mode: this.themeService.isDarkMode() ? 'dark' : 'light',
       });
     }
   }

@@ -1,13 +1,6 @@
-import {
-  Component,
-  computed,
-  input,
-  output,
-  ViewEncapsulation,
-  ChangeDetectionStrategy,
-} from "@angular/core";
-import { PlayerUI } from "../../pages/page-live/feed.interface";
-import { PlayerComponent } from "./player/player.component";
+import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { PlayerUI } from '../../pages/page-live/feed.interface';
+import { PlayerComponent } from './player/player.component';
 
 export interface BothPlayers {
   white: Partial<PlayerUI>;
@@ -15,9 +8,9 @@ export interface BothPlayers {
 }
 
 @Component({
-  selector: "app-players",
+  selector: 'app-players',
   imports: [PlayerComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="app-players">
       @let pw = playerWhite();
