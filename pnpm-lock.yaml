@@ -1755,8 +1755,8 @@ packages:
     resolution: {directory: ../chessfield, type: directory}
     engines: {node: '>=24', pnpm: '>=12'}
     peerDependencies:
-      '@lichess-org/chessground': '>=10.4.0'
-      three: 0.186.1
+      '@lichess-org/chessground': '>=10.0.0'
+      three: '>=0.186.0'
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
