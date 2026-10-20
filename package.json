@@ -31,7 +31,7 @@
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
     "chess.js": "^1.4.0",
-    "chessfield": "^2.2.1",
+    "chessfield": "file:/home/unic/Projects/OPEN/chessfield",
     "daisyui": "^5.7.50",
     "express": "^4.22.3",
     "postcss": "^8.5.31",
