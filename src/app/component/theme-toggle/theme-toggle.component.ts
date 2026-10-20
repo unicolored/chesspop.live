@@ -1,20 +1,25 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, type OnInit, PLATFORM_ID } from '@angular/core';
-import { LucideMoon, LucideSun, LucideVolume2, LucideVolumeX } from '@lucide/angular';
+import { ChangeDetectionStrategy, Component, computed, inject, type OnInit, PLATFORM_ID } from '@angular/core';
+import { LucideMoon, LucidePalette, LucideSun, LucideVolume2, LucideVolumeX } from '@lucide/angular';
 
+import { ChessfieldService } from '../../service/chessfield.service';
 import { ThemeService } from '../../service/theme.service';
 
 @Component({
   selector: 'app-theme-toggle',
-  imports: [LucideMoon, LucideSun, LucideVolume2, LucideVolumeX],
+  imports: [LucideMoon, LucidePalette, LucideSun, LucideVolume2, LucideVolumeX],
   templateUrl: './theme-toggle.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './theme-toggle.component.css',
 })
 export class ThemeToggleComponent implements OnInit {
   themeService = inject(ThemeService);
+  chessfieldService = inject(ChessfieldService);
   isDarkMode = this.themeService.isDarkMode();
   platformID = inject(PLATFORM_ID);
+
+  // Reactive theme colors from chessfield (for button styling)
+  themeColors = this.chessfieldService.themeColors;
 
   ngOnInit() {
     const isBrowser = isPlatformBrowser(this.platformID);
@@ -43,6 +48,11 @@ export class ThemeToggleComponent implements OnInit {
 
   toggleSounds() {
     this.themeService.toggleSounds();
+  }
+
+  /** Cycle to next chessfield theme */
+  cycleTheme() {
+    this.chessfieldService.switchTheme();
   }
 
   private updateTheme(dark: boolean) {
