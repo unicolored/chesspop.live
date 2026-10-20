@@ -23,6 +23,7 @@ import { fromEvent, startWith, Subject, type Subscription, switchMap, takeUntil 
 import { type Player } from '../../board/lichess.interface';
 import { type BothPlayers, PlayersComponent } from '../../component/players/players.component';
 import { AudioService } from '../../service/audio.service';
+import { ChessfieldService } from '../../service/chessfield.service';
 import { StreamService } from '../../service/stream.service';
 import { ThemeService } from '../../service/theme.service';
 
@@ -89,6 +90,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   themeService = inject(ThemeService);
   audioService = inject(AudioService);
   liveService = inject(LiveService);
+  chessfieldService = inject(ChessfieldService);
 
   canvasElement!: HTMLCanvasElement;
 
@@ -284,6 +286,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.chessfieldService.unregister();
     this.resetFeed();
   }
 
@@ -320,6 +323,9 @@ export class LiveComponent implements OnInit, OnDestroy {
         angle: 'right',
         mode: this.themeService.isDarkMode() ? 'dark' : 'light',
       });
+
+      // Register with service for global theme switching
+      this.chessfieldService.register(this.chessfield);
     }
   }
 }

@@ -8,6 +8,14 @@
 
 &nbsp;
 
+<button (click)="cycleTheme()" class="btn btn-circle"
+  [style.background-color]="themeColors()?.dark"
+  [style.color]="themeColors()?.light">
+  <svg lucidePalette class="h-5 w-5"></svg>
+</button>
+
+&nbsp;
+
 <button (click)="toggleMode()" class="btn btn-circle">
   @if (themeService.isDarkMode()) {
     <svg lucideSun class="h-5 w-5" title="Turn light on"></svg>
