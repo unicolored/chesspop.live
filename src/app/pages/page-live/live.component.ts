@@ -169,21 +169,29 @@ export class LiveComponent implements OnInit, OnDestroy {
                       // const loser = winner === WHITE ? BLACK : WHITE;
                       console.log(`Checkmate! Winner: ${winner}`);
 
-                      const findBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK });
-                      const findWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE });
+                      const findBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK }).pop();
+                      const findWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE }).pop();
                       // -> ['e8']
                       // console.log(`Mate king ${loser} on:`, findMateKing);
                       // console.log(`Winner king ${winner} on:`, findWinnerKing);
                       // console.log(`${headers[winner]} wins over ${headers[loser]}`);
 
+                      const mate = [];
+                      if (winner === WHITE && findBlackKing) {
+                        mate.push(findBlackKing);
+                      } else if (winner === BLACK && findWhiteKing) {
+                        mate.push(findWhiteKing);
+                      }
+
                       const gO: GameState = {
                         winner,
                         kings: {
-                          white: findWhiteKing.pop(),
-                          black: findBlackKing.pop(),
+                          white: findWhiteKing,
+                          black: findBlackKing,
                         },
+                        mate,
                       };
-                      this.chessfield.setGameOver(gO);
+                      this.chessfield.setState(gO);
                       console.log('Checkmate', gO);
                     } else if (this.chessjs.isDraw()) {
                       // It's a draw - check specific reason
@@ -194,30 +202,43 @@ export class LiveComponent implements OnInit, OnDestroy {
                       console.log('50-move rule:', this.chessjs.isDrawByFiftyMoves());
                       console.log('Insufficient material:', this.chessjs.isInsufficientMaterial());
 
-                      const findBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK });
-                      const findWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE });
+                      const findBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK }).pop();
+                      const findWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE }).pop();
+
+                      const draw = [];
+                      if (findWhiteKing) {
+                        draw.push(findWhiteKing);
+                      }
+                      if (findBlackKing) {
+                        draw.push(findBlackKing);
+                      }
 
                       const gO: GameState = {
                         kings: {
-                          white: findWhiteKing.pop(),
-                          black: findBlackKing.pop(),
+                          white: findWhiteKing,
+                          black: findBlackKing,
                         },
+                        draw,
                       };
-                      this.chessfield.setGameOver(gO);
+                      this.chessfield.setState(gO);
                       console.log('Draw', gO);
                     }
                   } else if (this.chessjs.isCheck()) {
-                    const findCheckKing = this.chessjs.findPiece({ type: KING, color: this.chessjs.turn() });
+                    const findCheckKing = this.chessjs
+                      .findPiece({ type: KING, color: this.chessjs.turn() })
+                      .pop();
                     // -> ['e8']
+
+                    const check = [];
+                    if (findCheckKing) {
+                      check.push(findCheckKing);
+                    }
                     const checkState: GameState = {
                       status: 'check',
-                      kings: {
-                        white: this.chessjs.turn() === 'w' ? findCheckKing.pop() : undefined,
-                        black: this.chessjs.turn() === 'b' ? findCheckKing.pop() : undefined,
-                      },
+                      check,
                     };
 
-                    this.chessfield.setCheck(checkState);
+                    this.chessfield.setState(checkState);
                     console.log('Check', checkState);
                   } else if (data.d.wc === 0 || data.d.bc === 0) {
                     let winner;
@@ -226,17 +247,17 @@ export class LiveComponent implements OnInit, OnDestroy {
                     } else if (data.d.bc === 0) {
                       winner = WHITE as 'w';
                     }
-                    const findTimeWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE });
-                    const findTimeBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK });
+                    const findTimeWhiteKing = this.chessjs.findPiece({ type: KING, color: WHITE }).pop();
+                    const findTimeBlackKing = this.chessjs.findPiece({ type: KING, color: BLACK }).pop();
                     const gOtime: GameState = {
                       status: 'timeout',
                       winner,
                       kings: {
-                        white: findTimeWhiteKing.pop(),
-                        black: findTimeBlackKing.pop(),
+                        white: findTimeWhiteKing,
+                        black: findTimeBlackKing,
                       },
                     };
-                    this.chessfield.setGameOver(gOtime);
+                    this.chessfield.setState(gOtime);
                     console.log('Timeout', gOtime);
                   }
                 }
