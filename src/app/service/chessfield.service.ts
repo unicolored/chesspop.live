@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { type Chessfield, type ThemeColors } from 'chessfield';
+import { type Camera, type Chessfield, type ThemeColors } from 'chessfield';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +19,13 @@ export class ChessfieldService {
     return cf ? cf.getThemeColors() : null;
   });
 
+  // Computed current camera - reactive to theme version (which increments on camera switch)
+  readonly currentCamera = computed<Camera>(() => {
+    this.themeVersion(); // Subscribe to version changes
+    const cf = this.chessfield();
+    return cf ? cf.getCurrentCamera() : 'white';
+  });
+
   register(chessfield: Chessfield): void {
     this.chessfield.set(chessfield);
   }
@@ -32,6 +39,15 @@ export class ChessfieldService {
     if (cf) {
       cf.switchTheme(theme);
       // Increment version to trigger themeColors recomputation
+      this.themeVersion.update(v => v + 1);
+    }
+  }
+
+  switchCamera(camera?: string): void {
+    const cf = this.chessfield();
+    if (cf) {
+      cf.switchCamera(camera);
+      // Increment version to trigger reactivity
       this.themeVersion.update(v => v + 1);
     }
   }

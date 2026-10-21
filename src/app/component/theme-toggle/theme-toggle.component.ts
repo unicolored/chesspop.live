@@ -9,8 +9,13 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  LucideMaximize2,
-  LucideMinimize2,
+  LucideArrowDown,
+  LucideArrowLeft,
+  LucideArrowRight,
+  LucideArrowUp,
+  LucideCamera,
+  LucideMaximize,
+  LucideMinimize,
   LucideMoon,
   LucidePalette,
   LucideSun,
@@ -25,8 +30,13 @@ import { ThemeService } from '../../service/theme.service';
 @Component({
   selector: 'app-theme-toggle',
   imports: [
-    LucideMaximize2,
-    LucideMinimize2,
+    LucideArrowDown,
+    LucideArrowLeft,
+    LucideArrowRight,
+    LucideArrowUp,
+    LucideCamera,
+    LucideMaximize,
+    LucideMinimize,
     LucideMoon,
     LucidePalette,
     LucideSun,
@@ -50,6 +60,25 @@ export class ThemeToggleComponent implements OnInit {
 
   // Reactive theme colors from chessfield (for button styling)
   themeColors = this.chessfieldService.themeColors;
+
+  // Dynamic camera icon based on current camera position
+  cameraIcon = computed(() => {
+    const camera = this.chessfieldService.currentCamera();
+    switch (camera) {
+      case 'white':
+        return 'arrow-up';
+      case 'right':
+        return 'arrow-left';
+      case 'black':
+        return 'arrow-down';
+      case 'left':
+        return 'arrow-right';
+      case 'top':
+        return 'camera';
+      default:
+        return 'camera';
+    }
+  });
 
   ngOnInit() {
     const isBrowser = isPlatformBrowser(this.platformID);
@@ -83,6 +112,11 @@ export class ThemeToggleComponent implements OnInit {
   /** Cycle to next chessfield theme */
   cycleTheme() {
     this.chessfieldService.switchTheme();
+  }
+
+  /** Cycle to next camera position */
+  cycleCamera() {
+    this.chessfieldService.switchCamera();
   }
 
   private updateTheme(dark: boolean) {
