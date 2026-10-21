@@ -1,7 +1,12 @@
 @defer {
   <div class="live-ui">
     <section class="chesspop-field">
-      <div class="chessfield-wrap" #chessfield></div>
+      <div class="chessfield-wrap relative" #chessfield>
+        <!-- Fullscreen-only theme toggle overlay -->
+        <div class="fs-toggle-overlay absolute top-2 right-2 z-10">
+          <app-theme-toggle />
+        </div>
+      </div>
 
       <app-players [players]="playersComputed()" (emitCameraCol)="updateCamera($event)"></app-players>
     </section>

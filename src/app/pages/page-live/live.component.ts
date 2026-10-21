@@ -22,6 +22,7 @@ import { fromEvent, startWith, Subject, type Subscription, switchMap, takeUntil 
 
 import { type Player } from '../../board/lichess.interface';
 import { type BothPlayers, PlayersComponent } from '../../component/players/players.component';
+import { ThemeToggleComponent } from '../../component/theme-toggle/theme-toggle.component';
 import { AudioService } from '../../service/audio.service';
 import { ChessfieldService } from '../../service/chessfield.service';
 import { FullscreenService } from '../../service/fullscreen.service';
@@ -33,7 +34,7 @@ import { LiveService } from './live.service';
 
 @Component({
   standalone: true,
-  imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent],
+  imports: [FormsModule, RouterModule, ReactiveFormsModule, PlayersComponent, ThemeToggleComponent],
   templateUrl: 'live.component.html',
   styleUrls: ['./live.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
