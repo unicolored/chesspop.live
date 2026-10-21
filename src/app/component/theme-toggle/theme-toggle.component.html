@@ -1,3 +1,18 @@
+@if (showFullscreenBtn()) {
+  <button
+    (click)="toggleFullscreen()"
+    class="btn btn-circle"
+    [attr.aria-label]="fullscreenService.isFullscreen() ? 'Exit fullscreen' : 'Enter fullscreen'">
+    @if (fullscreenService.isFullscreen()) {
+      <svg lucideMinimize2 class="h-5 w-5"></svg>
+    } @else {
+      <svg lucideMaximize2 class="h-5 w-5"></svg>
+    }
+  </button>
+
+  &nbsp;
+}
+
 <button (click)="toggleSounds()" class="btn btn-circle">
   @if (themeService.isSoundsOn()) {
     <svg lucideVolume2 class="h-5 w-5" title="Turn sounds ON"></svg>
@@ -8,7 +23,9 @@
 
 &nbsp;
 
-<button (click)="cycleTheme()" class="btn btn-circle"
+<button
+  (click)="cycleTheme()"
+  class="btn btn-circle"
   [style.background-color]="themeColors()?.dark"
   [style.color]="themeColors()?.light">
   <svg lucidePalette class="h-5 w-5"></svg>
