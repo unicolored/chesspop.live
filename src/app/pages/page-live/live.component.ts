@@ -24,6 +24,7 @@ import { type Player } from '../../board/lichess.interface';
 import { type BothPlayers, PlayersComponent } from '../../component/players/players.component';
 import { AudioService } from '../../service/audio.service';
 import { ChessfieldService } from '../../service/chessfield.service';
+import { FullscreenService } from '../../service/fullscreen.service';
 import { StreamService } from '../../service/stream.service';
 import { ThemeService } from '../../service/theme.service';
 
@@ -91,8 +92,9 @@ export class LiveComponent implements OnInit, OnDestroy {
   audioService = inject(AudioService);
   liveService = inject(LiveService);
   chessfieldService = inject(ChessfieldService);
+  fullscreenService = inject(FullscreenService);
 
-  canvasElement!: HTMLCanvasElement;
+  wrapperElement!: HTMLElement;
 
   private destroy$ = new Subject<void>();
 
@@ -101,13 +103,13 @@ export class LiveComponent implements OnInit, OnDestroy {
       const el = this.chessfieldElement();
 
       if (el) {
-        this.canvasElement = el.nativeElement;
+        this.wrapperElement = el.nativeElement;
         this.initChessfield();
       }
     });
     effect(() => {
       const isDarkMode = this.themeService.isDarkMode();
-      if (this.canvasElement && this.chessfield) {
+      if (this.wrapperElement && this.chessfield) {
         this.updateCamera(isDarkMode ? 'dark' : 'light');
       }
     });
@@ -308,6 +310,7 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.chessfieldService.unregister();
+    this.fullscreenService.unregisterWrapper();
     this.resetFeed();
   }
 
@@ -327,7 +330,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformID)) {
       this.streamService.isLoadingSignal.set(false);
 
-      this.chessfield = new Chessfield(this.canvasElement, {
+      this.chessfield = new Chessfield(this.wrapperElement, {
         plugins: {
           themes: {
             chesspop: {
@@ -347,6 +350,9 @@ export class LiveComponent implements OnInit, OnDestroy {
 
       // Register with service for global theme switching
       this.chessfieldService.register(this.chessfield);
+
+      // Register wrapper for fullscreen support
+      this.fullscreenService.registerWrapper(this.wrapperElement);
     }
   }
 }
