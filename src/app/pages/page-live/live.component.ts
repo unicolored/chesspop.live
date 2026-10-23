@@ -111,7 +111,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     effect(() => {
       const isDarkMode = this.themeService.isDarkMode();
       if (this.wrapperElement && this.chessfield) {
-        this.updateCamera(isDarkMode ? 'dark' : 'light');
+        this.chessfield.switchMode(isDarkMode ? 'dark' : 'light');
       }
     });
   }
@@ -315,16 +315,11 @@ export class LiveComponent implements OnInit, OnDestroy {
     this.resetFeed();
   }
 
-  updateCamera(event: string | undefined) {
-    console.log('updateCamera', event);
-
-    const options: ChessfieldConfig = {
-      camera: event as Camera,
-      angle: 'center' as Angle,
-      mode: this.themeService.isDarkMode() ? 'dark' : 'light',
-    };
-
-    this.chessfield.configUpdate(options);
+  setCameraForPlayer(color: string | undefined) {
+    console.log('setCameraForPlayer', color);
+    if (color === 'white' || color === 'black') {
+      this.chessfield.switchCamera(color);
+    }
   }
 
   initChessfield() {
