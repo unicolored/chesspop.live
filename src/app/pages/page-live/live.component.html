@@ -8,7 +8,7 @@
         </div>
       </div>
 
-      <app-players [players]="playersComputed()" (emitCameraCol)="updateCamera($event)"></app-players>
+      <app-players [players]="playersComputed()" (emitCameraCol)="setCameraForPlayer($event)"></app-players>
     </section>
 
     <aside class="sidebar">
