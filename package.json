@@ -24,10 +24,10 @@
     "@angular/platform-browser-dynamic": "^22.2.3",
     "@angular/platform-server": "^22.2.3",
     "@angular/router": "^22.2.3",
-    "@angular/ssr": "^22.2.3",
+    "@angular/ssr": "^22.2.4",
     "@chess-fu/fen-parser": "^1.1.4",
-    "@lichess-org/chessground": "^10.4.2",
-    "@lucide/angular": "^1.59.0",
+    "@lichess-org/chessground": "^10.5.0",
+    "@lucide/angular": "^1.61.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
     "chess.js": "^1.4.0",
@@ -40,8 +40,8 @@
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@angular/build": "^22.2.3",
-    "@angular/cli": "^22.2.3",
+    "@angular/build": "^22.2.4",
+    "@angular/cli": "^22.2.4",
     "@angular/compiler-cli": "^22.2.3",
     "@types/express": "^4.17.25",
     "@types/jasmine": "~5.1.15",
@@ -57,7 +57,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "typescript": "~6.0.3",
-    "wrangler": "^4.151.1"
+    "wrangler": "^4.152.0"
   },
   "packageManager": "pnpm@12.15.0"
 }
