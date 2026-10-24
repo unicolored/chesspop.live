@@ -286,6 +286,10 @@ export class LiveComponent implements OnInit, OnDestroy {
                   this.chessjs?.setHeader('BLACK', blackPlayerName);
 
                   // chess.setHeader('Date', '1858-??-??');
+
+                  this.chessfield.configUpdate({
+                    playerNames: { white: whitePlayerName, black: blackPlayerName },
+                  });
                 }
               }
             }
@@ -337,6 +341,16 @@ export class LiveComponent implements OnInit, OnDestroy {
               selected: 'orange',
             },
           },
+        },
+        playerNames: {
+          white: 'white!',
+          black: 'black!',
+        },
+        text: {
+          backend: 'canvas-sprite',
+          fontSize: 0.006,
+          offset: 0.07,
+          color: '#fff',
         },
         theme: 'chesspop',
         camera: 'white',
