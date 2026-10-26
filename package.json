@@ -8,7 +8,7 @@
     "check-format": "oxfmt --check",
     "deploy": "mise run deploy",
     "ng": "ng",
-    "dev": "ng serve chesspop.live --no-hmr --ssl --ssl-cert localhost.pem --ssl-key localhost-key.pem",
+    "dev": "rm -rf .angular/cache/*/chesspop.live/vite && ng serve chesspop.live --no-hmr --ssl --ssl-cert localhost.pem --ssl-key localhost-key.pem",
     "dist": "ng build --configuration production && mv dist/app/browser/index.csr.html dist/app/browser/index.html",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
