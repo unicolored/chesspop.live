@@ -19,15 +19,6 @@ section.chesspop-field {
   }
 }
 
-/* Fullscreen-only theme toggle overlay */
-.fs-toggle-overlay {
-  @apply hidden;
-}
-
-.chessfield-wrap:fullscreen .fs-toggle-overlay {
-  @apply flex;
-}
-
 /* Fullscreen: make canvas fill entire viewport */
 .chessfield-wrap:fullscreen {
   @apply fixed inset-0 z-50 mx-0 h-screen w-screen;
