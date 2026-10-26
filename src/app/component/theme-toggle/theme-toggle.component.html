@@ -33,10 +33,7 @@
 
 &nbsp;
 
-<button
-  (click)="cycleCamera()"
-  class="btn btn-circle"
-  title="Cycle camera position">
+<button (click)="cycleCamera()" class="btn btn-circle" title="Cycle camera position">
   @switch (cameraIcon()) {
     @case ('arrow-up') {
       <svg lucideArrowUp class="h-5 w-5"></svg>

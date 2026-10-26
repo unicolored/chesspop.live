@@ -13,6 +13,7 @@ describe('PlayerComponent', () => {
 
     fixture = TestBed.createComponent(PlayerComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('player', { color: 'white', name: 'Test', rating: 2500 });
     fixture.detectChanges();
   });
 
