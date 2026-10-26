@@ -10,6 +10,7 @@ import {
   type OnInit,
   PLATFORM_ID,
   signal,
+  untracked,
   viewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -17,9 +18,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import type * as cg from '@lichess-org/chessground/types';
 import { BLACK, Chess, KING, WHITE } from 'chess.js';
-import { type Angle, type Camera, Chessfield, type ChessfieldConfig, type GameState } from 'chessfield';
+import { Chessfield, type GameState } from 'chessfield';
 import { fromEvent, startWith, Subject, type Subscription, switchMap, takeUntil } from 'rxjs';
 
+import { CHESSPOP_THEME, CHESSPOP_THEME_NAME } from '../../board/chessfield-themes';
 import { type Player } from '../../board/lichess.interface';
 import { type BothPlayers, PlayersComponent } from '../../component/players/players.component';
 import { ThemeToggleComponent } from '../../component/theme-toggle/theme-toggle.component';
@@ -105,7 +107,9 @@ export class LiveComponent implements OnInit, OnDestroy {
 
       if (el) {
         this.wrapperElement = el.nativeElement;
-        this.initChessfield();
+        // Untracked: the board is built once. Theme, camera and mode changes are
+        // pushed to the existing instance by the services, not by rebuilding it.
+        untracked(() => this.initChessfield());
       }
     });
     effect(() => {
@@ -322,7 +326,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   setCameraForPlayer(color: string | undefined) {
     console.log('setCameraForPlayer', color);
     if (color === 'white' || color === 'black') {
-      this.chessfield.switchCamera(color);
+      this.chessfieldService.switchCamera(color);
     }
   }
 
@@ -333,13 +337,7 @@ export class LiveComponent implements OnInit, OnDestroy {
       this.chessfield = new Chessfield(this.wrapperElement, {
         plugins: {
           themes: {
-            chesspop: {
-              light: '#e3dbc9',
-              dark: '#cb4444',
-              highlight: '#c99a39',
-              statusCheck: '#ffff00',
-              selected: 'orange',
-            },
+            [CHESSPOP_THEME_NAME]: CHESSPOP_THEME,
           },
         },
         playerNames: {
@@ -352,9 +350,9 @@ export class LiveComponent implements OnInit, OnDestroy {
           offset: 0.07,
           color: '#fff',
         },
-        theme: 'chesspop',
-        camera: 'white',
-        angle: 'right',
+        theme: this.chessfieldService.currentTheme(),
+        camera: this.chessfieldService.currentCamera(),
+        angle: this.chessfieldService.currentCameraAngle(),
         mode: this.themeService.isDarkMode() ? 'dark' : 'light',
       });
 
