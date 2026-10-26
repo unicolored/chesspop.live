@@ -1,17 +1,13 @@
-@if (showFullscreenBtn()) {
-  <button
-    (click)="toggleFullscreen()"
-    class="btn btn-circle"
-    [attr.aria-label]="fullscreenService.isFullscreen() ? 'Exit fullscreen' : 'Enter fullscreen'">
-    @if (fullscreenService.isFullscreen()) {
-      <svg lucideMinimize class="h-5 w-5"></svg>
-    } @else {
-      <svg lucideMaximize class="h-5 w-5"></svg>
-    }
-  </button>
-
-  &nbsp;
-}
+<button
+  (click)="toggleFullscreen()"
+  class="btn btn-circle"
+  [attr.aria-label]="fullscreenService.isFullscreen() ? 'Exit fullscreen' : 'Enter fullscreen'">
+  @if (fullscreenService.isFullscreen()) {
+    <svg lucideMinimize class="h-5 w-5"></svg>
+  } @else {
+    <svg lucideMaximize class="h-5 w-5"></svg>
+  }
+</button>
 
 <button (click)="toggleSounds()" class="btn btn-circle">
   @if (themeService.isSoundsOn()) {
@@ -21,8 +17,6 @@
   }
 </button>
 
-&nbsp;
-
 <button
   (click)="cycleTheme()"
   class="btn btn-circle"
@@ -30,8 +24,6 @@
   [style.color]="themeColors()?.light">
   <svg lucidePalette class="h-5 w-5"></svg>
 </button>
-
-&nbsp;
 
 <button (click)="cycleCamera()" class="btn btn-circle" title="Cycle camera position">
   @switch (cameraIcon()) {
@@ -55,8 +47,6 @@
     }
   }
 </button>
-
-&nbsp;
 
 <button (click)="toggleMode()" class="btn btn-circle">
   @if (themeService.isDarkMode()) {

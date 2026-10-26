@@ -13,4 +13,16 @@ describe('ThemeService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should apply the mode to the document root', () => {
+    TestBed.tick();
+
+    service.setDarkMode(false);
+    TestBed.tick();
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+
+    service.setDarkMode(true);
+    TestBed.tick();
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
 });

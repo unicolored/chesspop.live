@@ -30,8 +30,11 @@ export class ThemeService {
     }
 
     effect(() => {
+      const darkMode = this.isDarkMode();
+
       if (isBrowser) {
-        localStorage.setItem('darkMode', this.isDarkMode() ? 'dark' : 'light');
+        localStorage.setItem('darkMode', darkMode ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
       }
     });
   }

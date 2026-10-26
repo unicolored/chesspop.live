@@ -1,13 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  type OnInit,
-  PLATFORM_ID,
-} from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import {
   LucideArrowDown,
   LucideArrowLeft,
@@ -47,16 +38,10 @@ import { ThemeService } from '../../service/theme.service';
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './theme-toggle.component.css',
 })
-export class ThemeToggleComponent implements OnInit {
+export class ThemeToggleComponent {
   themeService = inject(ThemeService);
   chessfieldService = inject(ChessfieldService);
   fullscreenService = inject(FullscreenService);
-  private router = inject(Router);
-  isDarkMode = this.themeService.isDarkMode();
-  platformID = inject(PLATFORM_ID);
-
-  // Show fullscreen button only on live page (homepage)
-  showFullscreenBtn = computed(() => this.router.url === '/');
 
   // Reactive theme colors from chessfield (for button styling)
   themeColors = this.chessfieldService.themeColors;
@@ -80,29 +65,8 @@ export class ThemeToggleComponent implements OnInit {
     }
   });
 
-  ngOnInit() {
-    const isBrowser = isPlatformBrowser(this.platformID);
-    if (isBrowser) {
-      const darkMode = localStorage.getItem('darkMode') ?? 'dark';
-      const isDarkMode = darkMode === 'dark';
-
-      this.setDarkMode(isDarkMode);
-      this.setSoundsOn(false);
-    }
-  }
-
-  setDarkMode(toggle: boolean) {
-    this.themeService.setDarkMode(toggle);
-    this.updateTheme(toggle);
-  }
-
-  setSoundsOn(toggle: boolean) {
-    this.themeService.setSoundsOn(toggle);
-  }
-
   toggleMode() {
     this.themeService.toggleMode();
-    this.updateTheme(this.themeService.isDarkMode());
   }
 
   toggleSounds() {
@@ -117,15 +81,6 @@ export class ThemeToggleComponent implements OnInit {
   /** Cycle to next camera position */
   cycleCamera() {
     this.chessfieldService.switchCamera();
-  }
-
-  private updateTheme(dark: boolean) {
-    this.isDarkMode = dark;
-    if (dark) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-    }
   }
 
   /** Toggle fullscreen for the chessfield canvas */
