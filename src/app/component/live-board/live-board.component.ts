@@ -9,7 +9,6 @@ import {
   input,
   type OnDestroy,
   type OnInit,
-  output,
   PLATFORM_ID,
   signal,
   untracked,
@@ -19,10 +18,10 @@ import {
 import type * as cg from '@lichess-org/chessground/types';
 import { BLACK, Chess, KING, WHITE } from 'chess.js';
 import { Chessfield, type GameState } from 'chessfield';
-import { fromEvent, startWith, type Subscription, switchMap } from 'rxjs';
+import { EMPTY, fromEvent, type Observable, startWith, type Subscription, switchMap, tap } from 'rxjs';
 
 import { CHESSPOP_THEME, CHESSPOP_THEME_NAME } from '../../board/chessfield-themes';
-import { type LichessStreamData, type Player } from '../../board/lichess.interface';
+import { type LichessStreamData } from '../../board/lichess.interface';
 import { type LichessTvFeed, type LiveFeed } from '../../board/live.interface';
 import { AudioService } from '../../service/audio.service';
 import { ChessfieldService } from '../../service/chessfield.service';
@@ -30,7 +29,6 @@ import { FullscreenService } from '../../service/fullscreen.service';
 import { LiveService } from '../../service/live.service';
 import { StreamService } from '../../service/stream.service';
 import { ThemeService } from '../../service/theme.service';
-import { type BothPlayers } from '../players/players.component';
 
 @Component({
   selector: 'app-live-board',
@@ -42,45 +40,11 @@ import { type BothPlayers } from '../players/players.component';
 export class LiveBoardComponent implements OnInit, OnDestroy {
   /** Feed selected by the surrounding layout. Changing it switches the Lichess stream. */
   feed = input.required<LiveFeed>();
-  /** Emits the players of the featured game so a layout can render them next to the board. */
-  playersChange = output<BothPlayers>();
 
-  private players = signal<Player[] | null>(null);
-  private playersComputed = computed<BothPlayers>(() => {
-    const players = this.players();
-    const result: BothPlayers = {
-      white: {},
-      black: {},
-    };
-    if (players) {
-      const playerWhite = players.find(p => p.color === 'white');
-      const playerBlack = players.find(p => p.color === 'black');
-
-      if (playerWhite) {
-        result.white = {
-          id: playerWhite.user.id,
-          title: playerWhite.user.title,
-          name: playerWhite.user.name,
-          rating: playerWhite.rating,
-          color: playerWhite.color,
-        };
-      }
-
-      if (playerBlack) {
-        result.black = {
-          id: playerBlack.user.id,
-          title: playerBlack.user.title,
-          name: playerBlack.user.name,
-          rating: playerBlack.rating,
-          color: playerBlack.color,
-        };
-      }
-    }
-    return result;
-  });
+  /** Connection state of the current feed, surfaced as an overlay on the board. */
+  readonly status = signal<'connecting' | 'live' | 'error'>('connecting');
 
   chessfield!: Chessfield;
-  chessjs!: Chess | null;
   platformID = inject(PLATFORM_ID);
   themeService = inject(ThemeService);
   audioService = inject(AudioService);
@@ -88,6 +52,9 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
   streamService = inject(StreamService);
   chessfieldService = inject(ChessfieldService);
   fullscreenService = inject(FullscreenService);
+
+  readonly liveFeedItem = computed(() => this.liveService.getLiveFeedItem(this.feed()));
+  readonly channelLabel = computed(() => `${this.liveFeedItem().platform} · ${this.liveFeedItem().type}`);
 
   chessfieldElement = viewChild<ElementRef>('chessfield');
 
@@ -106,8 +73,8 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
       }
     });
     effect(() => {
-      const feed = this.feed();
-      untracked(() => this.loadChannel(feed));
+      this.feed();
+      untracked(() => this.loadChannel());
     });
     effect(() => {
       const isDarkMode = this.themeService.isDarkMode();
@@ -123,43 +90,62 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadChannel(feed: LiveFeed): void {
+  retry(): void {
+    this.loadChannel();
+  }
+
+  private loadChannel(): void {
     this.resetFeed();
+    this.status.set('connecting');
 
-    const liveFeedItem = this.liveService.getLiveFeedItem(feed);
-
-    if (isPlatformBrowser(this.platformID)) {
-      const visibility$ = fromEvent(document, 'visibilitychange');
-      const chessMoves$ = this.streamService.startTv(liveFeedItem.url);
-
-      this.streamSubscription = visibility$
-        .pipe(
-          startWith(null),
-          switchMap(() => chessMoves$),
-        )
-        .subscribe({
-          next: data => this.onTvFeed(data),
-          error: err => {
-            console.error('Stream error:', err);
-          },
-          complete: () => {
-            console.log('Stream completed');
-          },
-        });
+    if (!isPlatformBrowser(this.platformID)) {
+      return;
     }
+
+    const streamUrl = this.liveFeedItem().url;
+    const visibility$ = fromEvent(document, 'visibilitychange');
+
+    this.streamSubscription = visibility$
+      .pipe(
+        startWith(null),
+        switchMap(() => (document.visibilityState === 'visible' ? this.connect(streamUrl) : EMPTY)),
+      )
+      .subscribe({
+        next: data => this.onTvFeed(data),
+        error: err => {
+          console.error('Stream error:', err);
+          this.status.set('error');
+        },
+      });
+  }
+
+  /**
+   * Opens the feed and reports a server-side close as an error, so the board
+   * offers a retry instead of silently showing a frozen position.
+   */
+  private connect(streamUrl: string): Observable<LichessTvFeed> {
+    this.status.set('connecting');
+
+    return this.streamService.startTv(streamUrl).pipe(
+      tap({
+        complete: () => this.status.set('error'),
+      }),
+    );
   }
 
   private onTvFeed(data: LichessTvFeed): void {
     if (data.t === 'fen') {
       this.applyFen(data.d);
     } else if (data.t === 'featured') {
-      this.applyFeatured(data.d);
+      void this.applyFeatured(data.d).catch(err => {
+        console.error('Featured update failed:', err);
+        this.status.set('error');
+      });
     }
   }
 
   private applyFen(data: LichessStreamData): void {
     const chess = new Chess(data.fen);
-    this.chessjs = chess;
 
     const lastMove = data.lm?.match(/.{1,2}/g) as cg.Key[];
 
@@ -169,6 +155,7 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
 
     this.audioService.playSound(133, 'sine', 0.1);
     this.chessfield.setFen(data.fen, lastMove);
+    this.status.set('live');
 
     if (chess.isGameOver()) {
       this.applyGameOver(chess);
@@ -273,35 +260,39 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
     console.log('Timeout', gameState);
   }
 
-  private applyFeatured(data: LichessStreamData): void {
+  private async applyFeatured(data: LichessStreamData): Promise<void> {
+    // `featured` carries the current position: show it right away instead of
+    // keeping the previous channel's game until the next move arrives.
+    if (data.fen && this.chessfield) {
+      this.chessfield.setFen(data.fen);
+      this.chessfield.setState({});
+    }
+
     const players = data.players;
     if (!players) {
+      this.status.set('live');
       return;
     }
 
-    this.players.set(players);
-    const bothPlayers = this.playersComputed();
-    this.playersChange.emit(bothPlayers);
+    const playerName = (color: 'white' | 'black'): string => {
+      const player = players.find(p => p.color === color);
+      if (!player) {
+        return '<pop>';
+      }
+      const title = player.user.title ? `${player.user.title} ` : '';
+      return `${title}${player.user.name ?? '<pop>'}`;
+    };
 
-    const whitePlayerTitle = bothPlayers.white.title ? `${bothPlayers.white.title} ` : '';
-    const whitePlayerName = `${whitePlayerTitle}${bothPlayers.white.name ?? '<pop>'}`;
-    const blackPlayerTitle = bothPlayers.black.title ? `${bothPlayers.black.title} ` : '';
-    const blackPlayerName = `${blackPlayerTitle}${bothPlayers.black.name ?? '<pop>'}`;
-
-    this.chessjs?.setHeader('White', whitePlayerName);
-    this.chessjs?.setHeader('WHITE', whitePlayerName);
-    this.chessjs?.setHeader('Black', blackPlayerName);
-    this.chessjs?.setHeader('BLACK', blackPlayerName);
-
-    this.chessfield?.configUpdate({
-      playerNames: { white: whitePlayerName, black: blackPlayerName },
+    await this.chessfield?.configUpdate({
+      playerNames: { white: playerName('white'), black: playerName('black') },
     });
+
+    this.status.set('live');
   }
 
   private resetFeed(): void {
     this.streamSubscription?.unsubscribe();
     this.streamSubscription = undefined;
-    this.streamService.stopTv();
   }
 
   ngOnDestroy(): void {

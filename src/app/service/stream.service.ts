@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, type Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { type LichessTvFeed } from '../board/live.interface';
 
@@ -7,86 +7,68 @@ import { type LichessTvFeed } from '../board/live.interface';
   providedIn: 'root',
 })
 export class StreamService {
-  reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
-  isStreaming = false;
-
+  /**
+   * Opens a Lichess TV feed. Every subscription owns its request, so
+   * unsubscribing aborts that request without touching any other stream.
+   */
   startTv(streamUrl: string): Observable<LichessTvFeed> {
-    if (this.isStreaming) {
-      return EMPTY;
-    }
+    return new Observable<LichessTvFeed>(subscriber => {
+      const controller = new AbortController();
 
-    this.isStreaming = true;
+      const readStream = async (): Promise<void> => {
+        const response = await fetch(streamUrl, { signal: controller.signal });
 
-    const dataSubject = new Subject<LichessTvFeed>();
-
-    fetch(streamUrl)
-      .then(response => {
         if (!response.ok) {
           throw new Error(`Stream request failed: ${response.status}`);
         }
-        if (!this.isStreaming) {
-          return response.body?.cancel();
+        if (!response.body) {
+          throw new Error('Stream request returned no body');
         }
-        this.reader = response.body!.getReader();
+
+        const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         let buffer = '';
 
-        const processStream = (
-          res: ReadableStreamReadResult<Uint8Array>,
-        ): Promise<ReadableStreamReadResult<Uint8Array> | void> => {
-          if (!this.isStreaming) {
-            return Promise.resolve();
-          }
-
-          if (res.done) {
-            this.finishStream();
-            dataSubject.complete();
-            return Promise.resolve();
-          }
-
-          buffer += decoder.decode(res.value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (!line.trim()) {
-              continue;
+        try {
+          while (!subscriber.closed) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
             }
-            let event: LichessTvFeed;
-            try {
-              event = JSON.parse(line) as LichessTvFeed;
-            } catch (e) {
-              this.finishStream();
-              dataSubject.error(new Error(`JSON Parse Error: ${e}`));
-              return Promise.resolve();
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() ?? '';
+
+            for (const line of lines) {
+              if (line.trim()) {
+                subscriber.next(parseEvent(line));
+              }
             }
-            dataSubject.next(event);
           }
 
-          return this.reader!.read().then(processStream);
-        };
+          subscriber.complete();
+        } finally {
+          reader.cancel().catch(() => undefined);
+        }
+      };
 
-        return this.reader.read().then(processStream);
-      })
-      .catch(error => {
-        this.finishStream();
-        dataSubject.error(error);
+      readStream().catch(error => {
+        // An abort is a deliberate teardown, not a stream failure.
+        if (!controller.signal.aborted) {
+          subscriber.error(error);
+        }
       });
 
-    return dataSubject.asObservable();
+      return () => controller.abort();
+    });
   }
+}
 
-  stopTv() {
-    this.finishStream();
-  }
-
-  private finishStream(): void {
-    if (!this.isStreaming && !this.reader) {
-      return;
-    }
-    this.isStreaming = false;
-    const reader = this.reader;
-    this.reader = null;
-    reader?.cancel();
+function parseEvent(line: string): LichessTvFeed {
+  try {
+    return JSON.parse(line) as LichessTvFeed;
+  } catch (e) {
+    throw new Error(`JSON Parse Error: ${e}`);
   }
 }

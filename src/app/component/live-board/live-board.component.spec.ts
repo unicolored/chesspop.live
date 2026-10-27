@@ -1,12 +1,13 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { type Chessfield } from 'chessfield';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { type LichessTvFeed } from '../../board/live.interface';
 import { StreamService } from '../../service/stream.service';
-import { type BothPlayers } from '../players/players.component';
 
 import { LiveBoardComponent } from './live-board.component';
+
+const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 describe('LiveBoardComponent', () => {
   let fixture: ComponentFixture<LiveBoardComponent>;
@@ -18,10 +19,27 @@ describe('LiveBoardComponent', () => {
     return jasmine.createSpyObj<Chessfield>('Chessfield', ['configUpdate', 'setFen', 'setState']);
   }
 
+  function settle(): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve));
+  }
+
+  function featured(fen: string): LichessTvFeed {
+    return {
+      t: 'featured',
+      d: {
+        fen,
+        players: [
+          { user: { id: 'white-id', name: 'Alice', title: 'GM' }, color: 'white', rating: 2800 },
+          { user: { id: 'black-id', name: 'Bob' }, color: 'black', rating: 2700 },
+        ],
+      },
+    };
+  }
+
   beforeEach(async () => {
-    spyOn(console, 'log');
+    spyOn(console, 'error');
     stream = new Subject<LichessTvFeed>();
-    streamService = jasmine.createSpyObj<StreamService>('StreamService', ['startTv', 'stopTv']);
+    streamService = jasmine.createSpyObj<StreamService>('StreamService', ['startTv']);
     streamService.startTv.and.returnValue(stream.asObservable());
 
     await TestBed.configureTestingModule({
@@ -43,55 +61,85 @@ describe('LiveBoardComponent', () => {
     expect(streamService.startTv).toHaveBeenCalledWith('https://lichess.org/api/tv/feed');
   });
 
-  it('stops the previous stream and starts the selected one', () => {
+  it('reports the connection while the stream is opening', () => {
+    expect(component.status()).toBe('connecting');
+    expect(fixture.nativeElement.querySelector('.cf-status').textContent).toContain(
+      'Connecting to Lichess · bullet',
+    );
+  });
+
+  it('starts the selected feed when the channel changes', () => {
     fixture.componentRef.setInput('feed', 'Lichess-blitz');
     fixture.detectChanges();
 
-    expect(streamService.stopTv).toHaveBeenCalled();
     expect(streamService.startTv).toHaveBeenCalledWith('https://lichess.org/api/tv/blitz/feed');
+    expect(component.status()).toBe('connecting');
   });
 
   it('stops the stream when destroyed', () => {
+    const teardown = jasmine.createSpy('teardown');
+    streamService.startTv.and.returnValue(new Observable<LichessTvFeed>(() => teardown));
+
+    fixture.componentRef.setInput('feed', 'Lichess-blitz');
+    fixture.detectChanges();
     fixture.destroy();
 
-    expect(streamService.stopTv).toHaveBeenCalled();
+    expect(teardown).toHaveBeenCalled();
   });
 
-  it('emits the featured players', () => {
-    let received: BothPlayers | undefined;
-    component.playersChange.subscribe(players => (received = players));
+  it('shows the featured position and player names right away', async () => {
     const chessfield = fakeChessfield();
     component.chessfield = chessfield;
+    const playSound = spyOn(component.audioService, 'playSound');
 
-    stream.next({
-      t: 'featured',
-      d: {
-        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        players: [
-          { user: { id: 'white-id', name: 'Alice', title: 'GM' }, color: 'white', rating: 2800 },
-          { user: { id: 'black-id', name: 'Bob' }, color: 'black', rating: 2700 },
-        ],
-      },
-    });
+    stream.next(featured(START_FEN));
+    await settle();
+    fixture.detectChanges();
 
-    expect(received?.white).toEqual(
-      jasmine.objectContaining({ id: 'white-id', name: 'Alice', rating: 2800 }),
-    );
-    expect(received?.black).toEqual(jasmine.objectContaining({ id: 'black-id', name: 'Bob', rating: 2700 }));
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN);
+    expect(chessfield.setState).toHaveBeenCalledWith({});
     expect(chessfield.configUpdate).toHaveBeenCalledWith({
       playerNames: { white: 'GM Alice', black: 'Bob' },
     });
+    expect(playSound).not.toHaveBeenCalled();
+    expect(component.status()).toBe('live');
+    expect(fixture.nativeElement.querySelector('.cf-status')).toBeNull();
   });
 
   it('applies a FEN to the board', () => {
-    const fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     const chessfield = fakeChessfield();
     component.chessfield = chessfield;
+    const playSound = spyOn(component.audioService, 'playSound');
 
-    stream.next({ t: 'fen', d: { fen } });
+    stream.next({ t: 'fen', d: { fen: START_FEN } });
 
-    expect(chessfield.setFen).toHaveBeenCalledWith(fen, undefined);
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, undefined);
     expect(chessfield.setState).not.toHaveBeenCalled();
+    expect(playSound).toHaveBeenCalled();
+    expect(component.status()).toBe('live');
+  });
+
+  it('offers a retry when the stream fails', () => {
+    stream.error(new Error('boom'));
+    fixture.detectChanges();
+
+    expect(component.status()).toBe('error');
+
+    const retryStream = new Subject<LichessTvFeed>();
+    streamService.startTv.and.returnValue(retryStream.asObservable());
+    (fixture.nativeElement.querySelector('.cf-retry') as HTMLButtonElement).click();
+
+    expect(streamService.startTv).toHaveBeenCalledTimes(2);
+    expect(component.status()).toBe('connecting');
+  });
+
+  it('offers a retry when the feed closes', () => {
+    stream.complete();
+
+    expect(component.status()).toBe('error');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.cf-retry')).not.toBeNull();
   });
 
   it('reports a checkmate winner', () => {
@@ -107,7 +155,7 @@ describe('LiveBoardComponent', () => {
     const chessfield = fakeChessfield();
     component.chessfield = chessfield;
 
-    stream.next({ t: 'fen', d: { fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', wc: 0 } });
+    stream.next({ t: 'fen', d: { fen: START_FEN, wc: 0 } });
 
     expect(chessfield.setState).toHaveBeenCalledWith(
       jasmine.objectContaining({ status: 'timeout', winner: 'b' }),
