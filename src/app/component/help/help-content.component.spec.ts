@@ -17,7 +17,7 @@ describe('HelpContentComponent', () => {
   it('explains channels and desktop mouse controls', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
-    expect(text).toContain('Select a channel. Wait for the next move.');
+    expect(text).toContain('Pick a channel to jump straight into a live game.');
     expect(text).toContain('Middle-button drag');
     expect(text).toContain('Scroll');
     expect(text).toContain('Right-click a square');

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, type ParamMap, provideRouter, Router } from '@angular/router';
 
 import { type LiveFeed } from '../../board/live.interface';
 import { LiveBoardComponent } from '../../component/live-board/live-board.component';
@@ -13,7 +13,7 @@ const HELP_HIDDEN_KEY = 'helpHidden';
 
 @Component({
   selector: 'app-live-board',
-  template: '',
+  template: '<ng-content />',
 })
 class StubLiveBoardComponent {
   feed = input.required<LiveFeed>();
@@ -21,19 +21,25 @@ class StubLiveBoardComponent {
 
 describe('WatchComponent', () => {
   let fixture: ComponentFixture<WatchComponent>;
+  let route: { snapshot: { queryParamMap: ParamMap } };
+  let router: Router;
 
   beforeEach(async () => {
     localStorage.removeItem(HELP_HIDDEN_KEY);
+    route = { snapshot: { queryParamMap: convertToParamMap({}) } };
 
     await TestBed.configureTestingModule({
       imports: [WatchComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), { provide: ActivatedRoute, useValue: route }],
     })
       .overrideComponent(WatchComponent, {
         remove: { imports: [LiveBoardComponent] },
         add: { imports: [StubLiveBoardComponent, ThemeToggleComponent] },
       })
       .compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
 
     createFixture();
   });
@@ -136,7 +142,51 @@ describe('WatchComponent', () => {
     expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-blitz');
     expect(buttons[0].classList).not.toContain('active');
     expect(buttons[1].classList).toContain('active');
+    expect(buttons[1].getAttribute('aria-current')).toBe('true');
+    expect(buttons[0].getAttribute('aria-current')).toBeNull();
     expect(stubBoard().feed()).toBe('Lichess-blitz');
+  });
+
+  it('puts the selected channel in the URL', () => {
+    const buttons = channelButtons(fixture.nativeElement.querySelector('.watch-sidebar') as HTMLElement);
+
+    buttons[1].click();
+
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({
+        queryParams: { channel: 'blitz' },
+        replaceUrl: true,
+      }),
+    );
+  });
+
+  it('starts on the channel named in the URL', () => {
+    fixture.destroy();
+    route.snapshot = { queryParamMap: convertToParamMap({ channel: 'rapid' }) };
+    createFixture();
+
+    expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-rapid');
+    expect(stubBoard().feed()).toBe('Lichess-rapid');
+  });
+
+  it('falls back to the default channel for an unknown URL value', () => {
+    fixture.destroy();
+    route.snapshot = { queryParamMap: convertToParamMap({ channel: 'nope' }) };
+    createFixture();
+
+    expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-bullet');
+  });
+
+  it('shows the current channel next to the theme toggle', () => {
+    const label = fixture.nativeElement.querySelector('.watch-channel') as HTMLElement;
+
+    expect(label.textContent?.trim()).toBe('Lichess · bullet');
+
+    fixture.componentInstance.selectFeed('Lichess-blitz');
+    fixture.detectChanges();
+
+    expect(label.textContent?.trim()).toBe('Lichess · blitz');
   });
 
   it('opens the menu from the popcorn trigger', () => {
@@ -189,7 +239,7 @@ describe('WatchComponent', () => {
 
   it('opens the help popup on the first visit', () => {
     expect(help().open).toBe(true);
-    expect(help().textContent).toContain('Select a channel. Wait for the next move.');
+    expect(help().textContent).toContain('Pick a channel to jump straight into a live game.');
     expect(help().textContent).toContain('Middle-button drag');
     expect(help().textContent).toContain('Pinch');
   });

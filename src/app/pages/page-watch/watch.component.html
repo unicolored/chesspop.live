@@ -16,6 +16,11 @@
 
     <app-live-board [feed]="selectedFeed()">
       <div board-overlay class="absolute top-2 right-2 z-10 flex items-center gap-2">
+        <span
+          class="watch-channel rounded-full bg-gray-800/80 px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap text-gray-100 uppercase shadow-lg backdrop-blur"
+          aria-live="polite"
+          >{{ channelLabel() }}</span
+        >
         <app-theme-toggle />
       </div>
     </app-live-board>
@@ -62,6 +67,7 @@
       <button
         type="button"
         [class.active]="selectedFeed() === liveFeed.feed"
+        [attr.aria-current]="selectedFeed() === liveFeed.feed ? 'true' : null"
         (click)="selectFeed(liveFeed.feed)">
         @switch (liveFeed.type) {
           @case ('bullet') {

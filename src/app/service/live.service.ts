@@ -45,4 +45,9 @@ export class LiveService {
   getLiveFeedItem(selectedFeed: LiveFeed): LiveFeedItem {
     return this.liveList.find(feed => feed.feed === selectedFeed) ?? this.defaultFeed;
   }
+
+  /** Resolves a `?channel=` URL value (the speed) to its feed. */
+  getFeedByType(type: string | null): LiveFeedItem | null {
+    return this.liveList.find(feed => feed.type === type) ?? null;
+  }
 }

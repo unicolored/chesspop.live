@@ -24,4 +24,10 @@ describe('LiveService', () => {
   it('falls back to the default feed for unknown channels', () => {
     expect(service.getLiveFeedItem('nope' as LiveFeed)).toBe(service.defaultFeed);
   });
+
+  it('resolves a channel from its URL value', () => {
+    expect(service.getFeedByType('rapid')?.feed).toBe('Lichess-rapid');
+    expect(service.getFeedByType('nope')).toBeNull();
+    expect(service.getFeedByType(null)).toBeNull();
+  });
 });

@@ -16,113 +16,111 @@ function ndjsonResponse(chunks: string[]): Response {
   return new Response(stream);
 }
 
+function openResponse(): Response {
+  return new Response(new ReadableStream<Uint8Array>({ start() {} }));
+}
+
+function settle(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve));
+}
+
 describe('StreamService', () => {
   let service: StreamService;
 
   beforeEach(() => {
-    spyOn(console, 'log');
     TestBed.configureTestingModule({});
     service = TestBed.inject(StreamService);
   });
 
-  afterEach(() => {
-    service.stopTv();
-  });
-
-  it('parses NDJSON events split across chunks', done => {
+  it('parses NDJSON events split across chunks', async () => {
     spyOn(globalThis, 'fetch').and.resolveTo(
       ndjsonResponse(['{"t":"fen","d":{"fen":"first"}}\n{"t":"fea', 'tured","d":{"fen":"second"}}\n']),
     );
 
     const events: LichessTvFeed[] = [];
-
-    service.startTv('https://example.test/feed').subscribe({
-      next: event => events.push(event),
-      error: done.fail,
-      complete: () => {
-        expect(events.length).toBe(2);
-        expect(events[0].t).toBe('fen');
-        expect(events[0].d.fen).toBe('first');
-        expect(events[1].t).toBe('featured');
-        expect(events[1].d.fen).toBe('second');
-        expect(service.isStreaming).toBe(false);
-        done();
-      },
+    await new Promise<void>(resolve => {
+      service.startTv('https://example.test/feed').subscribe({
+        next: event => events.push(event),
+        error: fail,
+        complete: resolve,
+      });
     });
+
+    expect(events.length).toBe(2);
+    expect(events[0].t).toBe('fen');
+    expect(events[0].d.fen).toBe('first');
+    expect(events[1].t).toBe('featured');
+    expect(events[1].d.fen).toBe('second');
   });
 
-  it('can start again once a stream has completed', done => {
+  it('aborts only the request that was unsubscribed', () => {
+    const signals = new Map<string, AbortSignal>();
+
+    spyOn(globalThis, 'fetch').and.callFake((input, init) => {
+      signals.set(String(input), init!.signal!);
+      return Promise.resolve(openResponse());
+    });
+
+    const first = service.startTv('https://example.test/first').subscribe({ error: fail });
+    const second = service.startTv('https://example.test/second').subscribe({ error: fail });
+
+    first.unsubscribe();
+
+    expect(signals.get('https://example.test/first')?.aborted).toBe(true);
+    expect(signals.get('https://example.test/second')?.aborted).toBe(false);
+
+    second.unsubscribe();
+  });
+
+  it('can start again once a stream has completed', async () => {
     const fetchSpy = spyOn(globalThis, 'fetch').and.callFake(() => Promise.resolve(ndjsonResponse([])));
 
-    service.startTv('https://example.test/first').subscribe({
-      complete: () => {
-        service.startTv('https://example.test/second').subscribe({
-          complete: () => {
-            expect(fetchSpy).toHaveBeenCalledTimes(2);
-            done();
-          },
-          error: done.fail,
-        });
-      },
-      error: done.fail,
+    await new Promise<void>(resolve => {
+      service.startTv('https://example.test/first').subscribe({ complete: resolve, error: fail });
     });
+    await new Promise<void>(resolve => {
+      service.startTv('https://example.test/second').subscribe({ complete: resolve, error: fail });
+    });
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('fails on invalid JSON lines', done => {
+  it('fails on invalid JSON lines', async () => {
     spyOn(globalThis, 'fetch').and.resolveTo(ndjsonResponse(['not-json\n']));
 
-    service.startTv('https://example.test/feed').subscribe({
-      next: () => done.fail('No event was expected'),
-      error: error => {
-        expect(error).toEqual(jasmine.any(Error));
-        expect(error.message).toContain('JSON Parse Error');
-        expect(service.isStreaming).toBe(false);
-        done();
-      },
+    const error = await new Promise<Error>(resolve => {
+      service.startTv('https://example.test/feed').subscribe({
+        next: () => fail('No event was expected'),
+        error: resolve,
+      });
     });
+
+    expect(error).toEqual(jasmine.any(Error));
+    expect(error.message).toContain('JSON Parse Error');
   });
 
-  it('fails when the stream request is rejected', done => {
+  it('fails when the stream request is rejected', async () => {
     spyOn(globalThis, 'fetch').and.resolveTo(new Response(null, { status: 500 }));
 
-    service.startTv('https://example.test/feed').subscribe({
-      next: () => done.fail('No event was expected'),
-      error: error => {
-        expect(error.message).toContain('500');
-        expect(service.isStreaming).toBe(false);
-        done();
-      },
-    });
-  });
-
-  it('ignores a response that arrives after the stream was stopped', async () => {
-    let respond!: (response: Response) => void;
-    spyOn(globalThis, 'fetch').and.returnValue(new Promise<Response>(resolve => (respond = resolve)));
-
-    service.startTv('https://example.test/feed');
-    service.stopTv();
-    respond(new Response(new ReadableStream<Uint8Array>()));
-
-    await new Promise(resolve => setTimeout(resolve));
-
-    expect(service.reader).toBeNull();
-    expect(service.isStreaming).toBe(false);
-  });
-
-  it('does not start a second stream while one is running', () => {
-    spyOn(globalThis, 'fetch').and.returnValue(new Promise<Response>(() => {}));
-
-    service.startTv('https://example.test/first');
-    let completed = false;
-
-    service.startTv('https://example.test/second').subscribe({
-      complete: () => (completed = true),
+    const error = await new Promise<Error>(resolve => {
+      service.startTv('https://example.test/feed').subscribe({
+        next: () => fail('No event was expected'),
+        error: resolve,
+      });
     });
 
-    expect(service.isStreaming).toBe(true);
-    expect(completed).toBe(true);
+    expect(error.message).toContain('500');
+  });
 
-    service.stopTv();
-    expect(service.isStreaming).toBe(false);
+  it('does not report an error when the subscription is aborted', async () => {
+    spyOn(globalThis, 'fetch').and.resolveTo(openResponse());
+
+    const error = jasmine.createSpy('error');
+    const subscription = service.startTv('https://example.test/feed').subscribe({ error });
+
+    subscription.unsubscribe();
+    await settle();
+
+    expect(error).not.toHaveBeenCalled();
   });
 });

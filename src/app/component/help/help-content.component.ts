@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
   template: `
-    <p>Select a channel. Wait for the next move.</p>
+    <p>Pick a channel to jump straight into a live game.</p>
 
     <h3 class="mt-4 mb-2 text-xs font-semibold tracking-wider uppercase opacity-70">Mouse</h3>
     <ul class="list-disc space-y-1 pl-5">
