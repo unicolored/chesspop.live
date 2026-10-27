@@ -7,8 +7,21 @@
 section.chesspop-field {
   @apply flex flex-col;
 
-  .chessfield-wrap {
-    @apply mx-auto flex h-[65vh] w-full lg:w-[80vw];
+  app-live-board {
+    @apply mx-auto block h-[65vh] w-full lg:w-[80vw];
+  }
+
+  /* Board controls stay usable on phones with notches and in narrow viewports. */
+  .board-controls {
+    position: absolute;
+    top: max(0.5rem, env(safe-area-inset-top));
+    right: max(0.5rem, env(safe-area-inset-right));
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    max-width: calc(100% - 1rem);
   }
 
   .app-players {
@@ -17,20 +30,6 @@ section.chesspop-field {
       @apply flex w-full cursor-pointer justify-between gap-2 px-2 py-3 text-wrap;
     }
   }
-}
-
-/* Fullscreen: make canvas fill entire viewport */
-.chessfield-wrap:fullscreen {
-  @apply fixed inset-0 z-50 mx-0 h-screen w-screen;
-}
-
-.chessfield-wrap:fullscreen canvas {
-  @apply h-screen w-screen;
-}
-
-/* Hide sidebar when chessfield is fullscreen */
-.chessfield-wrap:fullscreen ~ .sidebar {
-  @apply hidden;
 }
 
 aside.sidebar {

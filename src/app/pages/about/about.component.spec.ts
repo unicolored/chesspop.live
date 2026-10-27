@@ -19,4 +19,14 @@ describe('AboutComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('renders the project description and links', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const links = Array.from(compiled.querySelectorAll('a')).map(link => link.getAttribute('href'));
+
+    expect(compiled.querySelector('h1')?.textContent).toContain('About');
+    expect(compiled.textContent).toContain('ChessPop');
+    expect(links).toContain('https://github.com/unicolored/chesspop.live');
+    expect(links).toContain('https://github.com/unicolored/chesspop.live/issues');
+  });
 });

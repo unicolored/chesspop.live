@@ -107,4 +107,16 @@ describe('ChessfieldService', () => {
     expect(chessfield.switchCamera).toHaveBeenCalledWith('white');
     expect(chessfield.switchTheme).toHaveBeenCalledWith('green');
   });
+
+  it('applies mode switches to the registered chessfield instance', () => {
+    const service = createService();
+    const chessfield = {
+      switchMode: jasmine.createSpy('switchMode'),
+    } as unknown as Chessfield;
+    service.register(chessfield);
+
+    service.switchMode('dark');
+
+    expect(chessfield.switchMode).toHaveBeenCalledWith('dark');
+  });
 });

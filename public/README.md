@@ -1,6 +1,9 @@
-# Chessfield 🍿 Live
+# ChessPop 🍿 Live
 
-**Chessfield** is designed to display live games or static FEN in a spectator interactive 3D mode. Take a snack, enjoy!
+Interactive 3D viewer for live Lichess TV games.
 
-I hope it will help online players like me to keep an IRL view and analysis of the chess games.
-Chessfield is connected to live stream data (like [lichess.org/tv](https://lichess.org/tv)).
+- `/` — live board with navbar and channel controls
+- `/about` — project information
+- `/watch` — full-screen desktop layout without navbar
+
+Source and documentation: https://github.com/unicolored/chesspop.live

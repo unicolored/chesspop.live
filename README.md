@@ -1,70 +1,53 @@
 # ChessPop 🍿 Live
 
-**ChessPop** is designed to display live games or static FEN in a spectator interactive 3D mode. Take a snack, enjoy!
+**ChessPop** displays live chess games in an interactive 3D view. Pick a Lichess TV channel, grab some popcorn, and enjoy the show.
 
-I hope it will help online players like me to keep an IRL view and analysis of the chess games.
-Chessfield is connected to live stream data (like [lichess.org/tv](https://lichess.org/tv)).
+The 3D board is powered by [Chessfield](https://www.npmjs.com/package/chessfield). Live game data comes from [lichess.org/tv](https://lichess.org/tv).
 
-## Thanks
+## Routes
 
-- Stream Reader : [browser-ndjson-stream-reader.js](https://gist.github.com/ornicar/a097406810939cf7be1df8ea30e94f3e)
-- DaisyUI: https://github.com/saadeghi/daisyui
+| Route    | Layout                                                                           |
+| -------- | -------------------------------------------------------------------------------- |
+| `/`      | Live board with navbar, players and channel/sidebar controls                     |
+| `/about` | Project information with navbar                                                  |
+| `/watch` | Full-screen layout: sidebar on desktop, popcorn menu on mobile/tablet, no navbar |
+
+## Requirements
+
+- Node.js 24 (see `.nvmrc`)
+- pnpm 12 (see `packageManager` in `package.json`)
+
+## Commands
+
+```bash
+pnpm install       # install dependencies
+pnpm dev           # development server with local SSL
+pnpm format        # format with oxfmt
+pnpm check-format  # verify formatting
+pnpm lint          # lint with oxlint
+pnpm lint:fix      # lint and apply safe fixes
+pnpm test          # unit tests, headless, one shot
+pnpm test:watch    # unit tests in watch mode
+pnpm test:coverage # unit tests with coverage
+pnpm dist          # production build
+```
+
+## Testing
+
+Unit tests use Karma + Jasmine and run in Chrome. `pnpm test` runs once with `ChromeHeadless`; `pnpm test:watch` keeps Karma running while developing.
+
+## Deployment
+
+```bash
+mise run deploy
+```
+
+This builds the production app and deploys `dist/app/browser` with Wrangler.
+
+## Credits
+
+- Stream reader: [browser-ndjson-stream-reader.js](https://gist.github.com/ornicar/a097406810939cf7be1df8ea30e94f3e)
+- [DaisyUI](https://github.com/saadeghi/daisyui)
 - Popcorn favicon from [favicon.io](https://favicon.io/)
 - [Angular CLI](https://github.com/angular/angular-cli)
-- Chessfield: [npm package](https://www.npmjs.com/package/chessfield)
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Chessfield](https://www.npmjs.com/package/chessfield)
