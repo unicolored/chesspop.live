@@ -1,14 +1,13 @@
 @defer {
   <div class="live-ui">
     <section class="chesspop-field">
-      <div class="chessfield-wrap relative" #chessfield>
-        <!-- Board controls overlay -->
-        <div class="absolute top-2 right-2 z-10 flex items-center gap-2">
+      <app-live-board [feed]="selectedFeed()" (playersChange)="players.set($event)">
+        <div board-overlay class="absolute top-2 right-2 z-10 flex items-center gap-2">
           <app-theme-toggle />
         </div>
-      </div>
+      </app-live-board>
 
-      <app-players [players]="playersComputed()" (emitCameraCol)="setCameraForPlayer($event)"></app-players>
+      <app-players [players]="players()" (emitCameraCol)="setCameraForPlayer($event)"></app-players>
     </section>
 
     <aside class="sidebar">
@@ -16,9 +15,7 @@
         <p><small>Select a channel. Wait for next move.</small></p>
         <hr class="my-2" />
         @for (liveFeed of liveService.liveList; track liveFeed.url) {
-          <button
-            [class.active]="this.selectedLiveFeed === liveFeed.feed"
-            (click)="loadChannel(liveFeed.feed)">
+          <button [class.active]="selectedFeed() === liveFeed.feed" (click)="selectedFeed.set(liveFeed.feed)">
             {{ liveFeed.platform }} - {{ liveFeed.type }}
           </button>
         }

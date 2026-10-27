@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
-import { type PlayerUI } from '../../pages/page-live/feed.interface';
+import { type PlayerUI } from '../../board/live.interface';
 
 import { PlayerComponent } from './player/player.component';
 

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { LucideChessKing } from '@lucide/angular';
 
-import { type PlayerUI } from '../../../pages/page-live/feed.interface';
+import { type PlayerUI } from '../../../board/live.interface';
 
 @Component({
   selector: 'app-player',

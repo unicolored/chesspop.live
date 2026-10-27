@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { type LiveFeed, type LiveFeedItem } from './feed.interface';
+import { type LiveFeed, type LiveFeedItem } from '../board/live.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +37,6 @@ export class LiveService {
   }
 
   getLiveFeedItem(selectedFeed: LiveFeed): LiveFeedItem {
-    return this.liveList.find(l => `${l.feed}` === selectedFeed) ?? this.defaultFeed;
+    return this.liveList.find(feed => feed.feed === selectedFeed) ?? this.defaultFeed;
   }
 }
