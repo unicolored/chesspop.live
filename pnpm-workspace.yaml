@@ -4,3 +4,5 @@ allowBuilds:
   lmdb: true
   msgpackr-extract: true
   workerd: true
+overrides:
+  chessfield: link:../chessfield
