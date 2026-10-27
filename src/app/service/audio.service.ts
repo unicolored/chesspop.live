@@ -8,12 +8,15 @@ export class AudioService {
   private audioContext: AudioContext | null = null;
   private platformID = inject(PLATFORM_ID);
 
-  initSounds(enable = false) {
+  initSounds(enable: boolean) {
+    if (!isPlatformBrowser(this.platformID)) {
+      return;
+    }
+
     if (enable) {
-      if (isPlatformBrowser(this.platformID)) {
-        this.audioContext = new window.AudioContext();
-      }
+      this.audioContext ??= new window.AudioContext();
     } else {
+      void this.audioContext?.close();
       this.audioContext = null;
     }
   }

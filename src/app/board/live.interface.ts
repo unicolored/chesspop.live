@@ -1,4 +1,4 @@
-import { type LichessStreamData } from '../../board/lichess.interface';
+import { type LichessStreamData } from './lichess.interface';
 
 export type LivePlatform = 'Lichess' | string;
 export type LiveType = 'top' | 'rapid' | 'blitz' | 'bullet' | string;

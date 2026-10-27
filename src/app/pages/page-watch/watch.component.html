@@ -1,0 +1,62 @@
+<div class="watch-layout">
+  <aside class="watch-sidebar">
+    <ng-container *ngTemplateOutlet="navigation" />
+  </aside>
+
+  <main class="watch-stage">
+    <button
+      class="watch-menu-toggle"
+      type="button"
+      aria-label="Open channels"
+      aria-haspopup="dialog"
+      aria-controls="watch-menu"
+      (click)="openMenu()">
+      <svg lucidePopcorn class="h-6 w-6"></svg>
+    </button>
+
+    <app-live-board [feed]="selectedFeed()">
+      <div board-overlay class="absolute top-2 right-2 z-10 flex items-center gap-2">
+        <app-theme-toggle />
+      </div>
+    </app-live-board>
+  </main>
+
+  <dialog
+    id="watch-menu"
+    #menu
+    class="watch-menu"
+    aria-label="Channels and pages"
+    (click)="onBackdropClick($event)">
+    <div class="watch-menu-panel">
+      <button class="watch-menu-close" type="button" aria-label="Close menu" (click)="closeMenu()">
+        <svg lucideX class="h-5 w-5"></svg>
+      </button>
+
+      <ng-container *ngTemplateOutlet="navigation" />
+    </div>
+  </dialog>
+</div>
+
+<ng-template #navigation>
+  <a class="watch-logo" routerLink="/">
+    <svg lucidePopcorn class="h-6 w-6"></svg>
+    ChessPop
+  </a>
+
+  <nav class="watch-channels" aria-label="Lichess channels">
+    <p class="watch-label">Lichess</p>
+    @for (liveFeed of liveService.liveList; track liveFeed.url) {
+      <button
+        type="button"
+        [class.active]="selectedFeed() === liveFeed.feed"
+        (click)="selectFeed(liveFeed.feed)">
+        {{ liveFeed.type }}
+      </button>
+    }
+  </nav>
+
+  <nav class="watch-pages" aria-label="Pages">
+    <p class="watch-label">Pages</p>
+    <a routerLink="/about">About</a>
+  </nav>
+</ng-template>
