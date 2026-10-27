@@ -1,7 +1,7 @@
-@import 'tailwindcss';
+@reference 'tailwindcss';
 
 :host {
-  @apply block h-screen overflow-hidden;
+  @apply block h-dvh overflow-hidden;
 }
 
 .watch-layout {
@@ -9,11 +9,11 @@
 }
 
 .watch-sidebar {
-  @apply flex w-64 shrink-0 flex-col bg-gray-800 p-4 text-gray-100;
+  @apply hidden w-64 shrink-0 flex-col bg-gray-800 p-4 text-gray-100 lg:flex;
 }
 
 .watch-logo {
-  @apply flex items-center gap-2 rounded px-2 py-1 text-xl font-bold hover:bg-gray-700;
+  @apply flex min-h-11 items-center gap-2 rounded px-2 py-1 text-xl font-bold hover:bg-gray-700;
 }
 
 .watch-label {
@@ -25,7 +25,7 @@
 }
 
 .watch-channels button {
-  @apply w-full cursor-pointer rounded px-2 py-2 text-left text-sm font-bold uppercase hover:bg-gray-700;
+  @apply min-h-11 w-full cursor-pointer rounded px-2 py-2 text-left text-sm font-bold uppercase hover:bg-gray-700;
 
   &.active {
     @apply bg-red-800 text-white;
@@ -37,13 +37,50 @@
 }
 
 .watch-pages a {
-  @apply block rounded px-2 py-2 text-sm font-bold uppercase hover:bg-gray-700;
+  @apply flex min-h-11 items-center rounded px-2 py-2 text-sm font-bold uppercase hover:bg-gray-700;
 }
 
 .watch-stage {
-  @apply min-w-0 flex-1 bg-red-800;
+  @apply relative min-h-0 min-w-0 flex-1 bg-red-800;
 
   app-live-board {
     @apply block h-full w-full;
   }
+}
+
+.watch-menu-toggle {
+  @apply absolute z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-gray-800/80 text-gray-100 shadow-lg backdrop-blur transition-colors hover:bg-gray-700 lg:hidden;
+  top: max(0.75rem, env(safe-area-inset-top));
+  left: max(0.75rem, env(safe-area-inset-left));
+}
+
+.watch-menu {
+  @apply m-0 border-0 bg-gray-800 p-0 text-gray-100;
+  inset: 0 auto 0 0;
+  width: min(20rem, 85vw);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+}
+
+.watch-menu::backdrop {
+  @apply bg-black/60;
+}
+
+.watch-menu-panel {
+  @apply relative flex h-full flex-col p-4;
+
+  padding-top: max(1rem, env(safe-area-inset-top));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  padding-left: max(1rem, env(safe-area-inset-left));
+
+  .watch-logo {
+    @apply pr-12;
+  }
+}
+
+.watch-menu-close {
+  @apply absolute inline-flex h-11 w-11 items-center justify-center rounded text-gray-300 hover:bg-gray-700;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.75rem, env(safe-area-inset-right));
 }

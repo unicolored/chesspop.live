@@ -2,7 +2,7 @@
   <div class="live-ui">
     <section class="chesspop-field">
       <app-live-board [feed]="selectedFeed()" (playersChange)="players.set($event)">
-        <div board-overlay class="absolute top-2 right-2 z-10 flex items-center gap-2">
+        <div board-overlay class="board-controls">
           <app-theme-toggle />
         </div>
       </app-live-board>

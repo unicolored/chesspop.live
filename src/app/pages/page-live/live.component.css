@@ -11,6 +11,19 @@ section.chesspop-field {
     @apply mx-auto block h-[65vh] w-full lg:w-[80vw];
   }
 
+  /* Board controls stay usable on phones with notches and in narrow viewports. */
+  .board-controls {
+    position: absolute;
+    top: max(0.5rem, env(safe-area-inset-top));
+    right: max(0.5rem, env(safe-area-inset-right));
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+
   .app-players {
     @apply flex flex-col gap-2 p-2 md:flex-row md:justify-around;
     .app-player {
