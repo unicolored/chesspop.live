@@ -30,6 +30,6 @@ describe('DefaultLayoutComponent', () => {
       link.getAttribute('href'),
     );
 
-    expect(links).toEqual(['/', '/watch', '/about']);
+    expect(links).toEqual(['/', '/help', '/about']);
   });
 });

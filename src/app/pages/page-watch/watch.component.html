@@ -26,13 +26,26 @@
     #menu
     class="watch-menu"
     aria-label="Channels and pages"
-    (click)="onBackdropClick($event)">
+    (click)="onBackdropClick($event, menu)">
     <div class="watch-menu-panel">
       <button class="watch-menu-close" type="button" aria-label="Close menu" (click)="closeMenu()">
         <svg lucideX class="h-5 w-5"></svg>
       </button>
 
       <ng-container *ngTemplateOutlet="navigation" />
+    </div>
+  </dialog>
+
+  <dialog
+    id="watch-help"
+    #help
+    class="watch-help"
+    aria-labelledby="watch-help-title"
+    (click)="onBackdropClick($event, help)">
+    <div class="watch-help-panel">
+      <h2 id="watch-help-title">How to watch</h2>
+      <app-help-content />
+      <button class="watch-help-hide" type="button" (click)="hideHelp()">Hide</button>
     </div>
   </dialog>
 </div>
@@ -50,6 +63,17 @@
         type="button"
         [class.active]="selectedFeed() === liveFeed.feed"
         (click)="selectFeed(liveFeed.feed)">
+        @switch (liveFeed.type) {
+          @case ('bullet') {
+            <svg lucideRocket class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+          }
+          @case ('blitz') {
+            <svg lucideZap class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+          }
+          @case ('rapid') {
+            <svg lucideClock class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+          }
+        }
         {{ liveFeed.type }}
       </button>
     }
@@ -57,6 +81,7 @@
 
   <nav class="watch-pages" aria-label="Pages">
     <p class="watch-label">Pages</p>
+    <button type="button" (click)="openHelp()">Help</button>
     <a routerLink="/about">About</a>
   </nav>
 </ng-template>

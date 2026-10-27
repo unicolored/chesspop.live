@@ -2,16 +2,13 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   effect,
   type ElementRef,
   inject,
   input,
   type OnDestroy,
   type OnInit,
-  output,
   PLATFORM_ID,
-  signal,
   untracked,
   viewChild,
   ViewEncapsulation,
@@ -22,7 +19,7 @@ import { Chessfield, type GameState } from 'chessfield';
 import { fromEvent, startWith, type Subscription, switchMap } from 'rxjs';
 
 import { CHESSPOP_THEME, CHESSPOP_THEME_NAME } from '../../board/chessfield-themes';
-import { type LichessStreamData, type Player } from '../../board/lichess.interface';
+import { type LichessStreamData } from '../../board/lichess.interface';
 import { type LichessTvFeed, type LiveFeed } from '../../board/live.interface';
 import { AudioService } from '../../service/audio.service';
 import { ChessfieldService } from '../../service/chessfield.service';
@@ -30,7 +27,6 @@ import { FullscreenService } from '../../service/fullscreen.service';
 import { LiveService } from '../../service/live.service';
 import { StreamService } from '../../service/stream.service';
 import { ThemeService } from '../../service/theme.service';
-import { type BothPlayers } from '../players/players.component';
 
 @Component({
   selector: 'app-live-board',
@@ -42,42 +38,6 @@ import { type BothPlayers } from '../players/players.component';
 export class LiveBoardComponent implements OnInit, OnDestroy {
   /** Feed selected by the surrounding layout. Changing it switches the Lichess stream. */
   feed = input.required<LiveFeed>();
-  /** Emits the players of the featured game so a layout can render them next to the board. */
-  playersChange = output<BothPlayers>();
-
-  private players = signal<Player[] | null>(null);
-  private playersComputed = computed<BothPlayers>(() => {
-    const players = this.players();
-    const result: BothPlayers = {
-      white: {},
-      black: {},
-    };
-    if (players) {
-      const playerWhite = players.find(p => p.color === 'white');
-      const playerBlack = players.find(p => p.color === 'black');
-
-      if (playerWhite) {
-        result.white = {
-          id: playerWhite.user.id,
-          title: playerWhite.user.title,
-          name: playerWhite.user.name,
-          rating: playerWhite.rating,
-          color: playerWhite.color,
-        };
-      }
-
-      if (playerBlack) {
-        result.black = {
-          id: playerBlack.user.id,
-          title: playerBlack.user.title,
-          name: playerBlack.user.name,
-          rating: playerBlack.rating,
-          color: playerBlack.color,
-        };
-      }
-    }
-    return result;
-  });
 
   chessfield!: Chessfield;
   chessjs!: Chess | null;
@@ -279,14 +239,17 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.players.set(players);
-    const bothPlayers = this.playersComputed();
-    this.playersChange.emit(bothPlayers);
+    const playerName = (color: 'white' | 'black'): string => {
+      const player = players.find(p => p.color === color);
+      if (!player) {
+        return '<pop>';
+      }
+      const title = player.user.title ? `${player.user.title} ` : '';
+      return `${title}${player.user.name ?? '<pop>'}`;
+    };
 
-    const whitePlayerTitle = bothPlayers.white.title ? `${bothPlayers.white.title} ` : '';
-    const whitePlayerName = `${whitePlayerTitle}${bothPlayers.white.name ?? '<pop>'}`;
-    const blackPlayerTitle = bothPlayers.black.title ? `${bothPlayers.black.title} ` : '';
-    const blackPlayerName = `${blackPlayerTitle}${bothPlayers.black.name ?? '<pop>'}`;
+    const whitePlayerName = playerName('white');
+    const blackPlayerName = playerName('black');
 
     this.chessjs?.setHeader('White', whitePlayerName);
     this.chessjs?.setHeader('WHITE', whitePlayerName);

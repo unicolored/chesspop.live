@@ -4,7 +4,6 @@ import { Subject } from 'rxjs';
 
 import { type LichessTvFeed } from '../../board/live.interface';
 import { StreamService } from '../../service/stream.service';
-import { type BothPlayers } from '../players/players.component';
 
 import { LiveBoardComponent } from './live-board.component';
 
@@ -57,9 +56,7 @@ describe('LiveBoardComponent', () => {
     expect(streamService.stopTv).toHaveBeenCalled();
   });
 
-  it('emits the featured players', () => {
-    let received: BothPlayers | undefined;
-    component.playersChange.subscribe(players => (received = players));
+  it('shows the featured player names on the board', () => {
     const chessfield = fakeChessfield();
     component.chessfield = chessfield;
 
@@ -74,10 +71,6 @@ describe('LiveBoardComponent', () => {
       },
     });
 
-    expect(received?.white).toEqual(
-      jasmine.objectContaining({ id: 'white-id', name: 'Alice', rating: 2800 }),
-    );
-    expect(received?.black).toEqual(jasmine.objectContaining({ id: 'black-id', name: 'Bob', rating: 2700 }));
     expect(chessfield.configUpdate).toHaveBeenCalledWith({
       playerNames: { white: 'GM Alice', black: 'Bob' },
     });

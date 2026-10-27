@@ -6,11 +6,11 @@ The 3D board is powered by [Chessfield](https://www.npmjs.com/package/chessfield
 
 ## Routes
 
-| Route    | Layout                                                                           |
-| -------- | -------------------------------------------------------------------------------- |
-| `/`      | Live board with navbar, players and channel/sidebar controls                     |
-| `/about` | Project information with navbar                                                  |
-| `/watch` | Full-screen layout: sidebar on desktop, popcorn menu on mobile/tablet, no navbar |
+| Route    | Layout                                                                                           |
+| -------- | ------------------------------------------------------------------------------------------------ |
+| `/`      | Full-screen watch layout: 3D board, sidebar on desktop, popcorn menu on mobile/tablet, no navbar |
+| `/about` | Project information with navbar                                                                  |
+| `/help`  | Mouse and touch controls with navbar                                                             |
 
 ## Requirements
 

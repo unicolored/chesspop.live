@@ -13,8 +13,8 @@ describe('LiveService', () => {
   });
 
   it('exposes the Lichess TV channels', () => {
-    expect(service.defaultFeed.feed).toBe('Lichess-top');
-    expect(service.liveList.map(feed => feed.type)).toEqual(['top', 'blitz', 'bullet', 'rapid']);
+    expect(service.defaultFeed.feed).toBe('Lichess-bullet');
+    expect(service.liveList.map(feed => feed.type)).toEqual(['bullet', 'blitz', 'rapid']);
   });
 
   it('returns the requested feed', () => {

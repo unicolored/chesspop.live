@@ -25,7 +25,7 @@
 }
 
 .watch-channels button {
-  @apply min-h-11 w-full cursor-pointer rounded px-2 py-2 text-left text-sm font-bold uppercase hover:bg-gray-700;
+  @apply flex min-h-11 w-full cursor-pointer items-center gap-2 rounded px-2 py-2 text-left text-sm font-bold uppercase hover:bg-gray-700;
 
   &.active {
     @apply bg-red-800 text-white;
@@ -36,8 +36,9 @@
   @apply mt-auto flex flex-col gap-1;
 }
 
-.watch-pages a {
-  @apply flex min-h-11 items-center rounded px-2 py-2 text-sm font-bold uppercase hover:bg-gray-700;
+.watch-pages a,
+.watch-pages button {
+  @apply flex min-h-11 w-full cursor-pointer items-center rounded px-2 py-2 text-left text-sm font-bold uppercase hover:bg-gray-700;
 }
 
 .watch-stage {
@@ -83,4 +84,30 @@
   @apply absolute inline-flex h-11 w-11 items-center justify-center rounded text-gray-300 hover:bg-gray-700;
   top: max(0.75rem, env(safe-area-inset-top));
   right: max(0.75rem, env(safe-area-inset-right));
+}
+
+.watch-help {
+  @apply m-auto rounded-xl border-0 bg-gray-800 p-0 text-gray-100 shadow-2xl;
+  width: min(28rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+}
+
+.watch-help::backdrop {
+  @apply bg-black/60;
+}
+
+.watch-help-panel {
+  @apply flex flex-col gap-4 p-6;
+
+  padding-top: max(1.5rem, env(safe-area-inset-top));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+.watch-help h2 {
+  @apply text-xl font-bold;
+}
+
+.watch-help-hide {
+  @apply min-h-11 w-full cursor-pointer rounded bg-red-800 px-4 py-2 font-bold text-white uppercase hover:bg-red-700;
 }
