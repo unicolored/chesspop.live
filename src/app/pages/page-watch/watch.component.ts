@@ -12,11 +12,12 @@ import { LucidePopcorn, LucideX } from '@lucide/angular';
 
 import { type LiveFeed } from '../../board/live.interface';
 import { LiveBoardComponent } from '../../component/live-board/live-board.component';
+import { ThemeToggleComponent } from '../../component/theme-toggle/theme-toggle.component';
 import { LiveService } from '../../service/live.service';
 
 @Component({
   selector: 'app-watch',
-  imports: [LiveBoardComponent, LucidePopcorn, LucideX, NgTemplateOutlet, RouterModule],
+  imports: [LiveBoardComponent, LucidePopcorn, LucideX, ThemeToggleComponent, NgTemplateOutlet, RouterModule],
   templateUrl: './watch.component.html',
   styleUrl: './watch.component.css',
   changeDetection: ChangeDetectionStrategy.Eager,

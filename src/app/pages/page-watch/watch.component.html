@@ -14,7 +14,11 @@
       <svg lucidePopcorn class="h-6 w-6"></svg>
     </button>
 
-    <app-live-board [feed]="selectedFeed()" />
+    <app-live-board [feed]="selectedFeed()">
+      <div board-overlay class="absolute top-2 right-2 z-10 flex items-center gap-2">
+        <app-theme-toggle />
+      </div>
+    </app-live-board>
   </main>
 
   <dialog

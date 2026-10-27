@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { type LiveFeed } from '../../board/live.interface';
 import { LiveBoardComponent } from '../../component/live-board/live-board.component';
+import { ThemeToggleComponent } from '../../component/theme-toggle/theme-toggle.component';
 
 import { WatchComponent } from './watch.component';
 
@@ -27,7 +28,7 @@ describe('WatchComponent', () => {
     })
       .overrideComponent(WatchComponent, {
         remove: { imports: [LiveBoardComponent] },
-        add: { imports: [StubLiveBoardComponent] },
+        add: { imports: [StubLiveBoardComponent, ThemeToggleComponent] },
       })
       .compileComponents();
 
