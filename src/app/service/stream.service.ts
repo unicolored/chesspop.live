@@ -1,84 +1,74 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { type Observable, of, Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
-import { type LichessTvFeed } from '../pages/page-live/feed.interface';
+import { type LichessTvFeed } from '../board/live.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StreamService {
-  reader: ReadableStreamDefaultReader<Uint8Array> | null = null; // Store the reader globally to control it
+  /**
+   * Opens a Lichess TV feed. Every subscription owns its request, so
+   * unsubscribing aborts that request without touching any other stream.
+   */
+  startTv(streamUrl: string): Observable<LichessTvFeed> {
+    return new Observable<LichessTvFeed>(subscriber => {
+      const controller = new AbortController();
 
-  isLoadingSignal = signal<boolean>(false);
-  isLoading = computed<boolean>(() => this.isLoadingSignal());
+      const readStream = async (): Promise<void> => {
+        const response = await fetch(streamUrl, { signal: controller.signal });
 
-  isStreaming = false; // Flag to track streaming status
-
-  startTv(streamUrl: string): Observable<LichessTvFeed | null> {
-    if (this.isStreaming) {
-      return of(null);
-    }
-
-    this.isStreaming = true;
-
-    const dataSubject = new Subject<any>();
-
-    fetch(streamUrl)
-      .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`Stream request failed: ${response.status}`);
         }
-        this.reader = response.body!.getReader();
+        if (!response.body) {
+          throw new Error('Stream request returned no body');
+        }
+
+        const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         let buffer = '';
 
-        const processStream = (
-          res: ReadableStreamReadResult<Uint8Array>,
-        ): Promise<ReadableStreamReadResult<Uint8Array> | void> => {
-          if (!this.isStreaming) {
-            this.reader?.cancel();
-            return Promise.resolve();
-          }
+        try {
+          while (!subscriber.closed) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
 
-          if (res.done) {
-            console.log('Stream completed');
-            dataSubject.complete();
-            return Promise.resolve();
-          }
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() ?? '';
 
-          // Decode and process the stream
-          buffer += decoder.decode(res.value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          lines.forEach(line => {
-            if (line.trim()) {
-              try {
-                const json = JSON.parse(line);
-                dataSubject.next(json);
-              } catch (e) {
-                dataSubject.error(`JSON Parse Error: ${e}`);
+            for (const line of lines) {
+              if (line.trim()) {
+                subscriber.next(parseEvent(line));
               }
             }
-          });
+          }
 
-          // Continue reading
-          return this.reader!.read().then(processStream);
-        };
+          subscriber.complete();
+        } finally {
+          reader.cancel().catch(() => undefined);
+        }
+      };
 
-        return this.reader.read().then(processStream);
-      })
-      .catch(error => dataSubject.error(error));
+      readStream().catch(error => {
+        // An abort is a deliberate teardown, not a stream failure.
+        if (!controller.signal.aborted) {
+          subscriber.error(error);
+        }
+      });
 
-    return dataSubject.asObservable();
+      return () => controller.abort();
+    });
   }
+}
 
-  stopTv() {
-    if (!this.isStreaming) return;
-    this.isStreaming = false;
-    if (this.reader) {
-      this.reader.cancel(); // Terminate the reader to stop fetching
-      console.log('Streaming stopped');
-    }
+function parseEvent(line: string): LichessTvFeed {
+  try {
+    return JSON.parse(line) as LichessTvFeed;
+  } catch (e) {
+    throw new Error(`JSON Parse Error: ${e}`);
   }
 }

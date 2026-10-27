@@ -1,3 +1,14 @@
+<button
+  (click)="toggleFullscreen()"
+  class="btn btn-circle"
+  [attr.aria-label]="fullscreenService.isFullscreen() ? 'Exit fullscreen' : 'Enter fullscreen'">
+  @if (fullscreenService.isFullscreen()) {
+    <svg lucideMinimize class="h-5 w-5"></svg>
+  } @else {
+    <svg lucideMaximize class="h-5 w-5"></svg>
+  }
+</button>
+
 <button (click)="toggleSounds()" class="btn btn-circle">
   @if (themeService.isSoundsOn()) {
     <svg lucideVolume2 class="h-5 w-5" title="Turn sounds ON"></svg>
@@ -6,7 +17,36 @@
   }
 </button>
 
-&nbsp;
+<button
+  (click)="cycleTheme()"
+  class="btn btn-circle"
+  [style.background-color]="themeColors()?.dark"
+  [style.color]="themeColors()?.light">
+  <svg lucidePalette class="h-5 w-5"></svg>
+</button>
+
+<button (click)="cycleCamera()" class="btn btn-circle" title="Cycle camera position">
+  @switch (cameraIcon()) {
+    @case ('arrow-up') {
+      <svg lucideArrowUp class="h-5 w-5"></svg>
+    }
+    @case ('arrow-right') {
+      <svg lucideArrowRight class="h-5 w-5"></svg>
+    }
+    @case ('arrow-down') {
+      <svg lucideArrowDown class="h-5 w-5"></svg>
+    }
+    @case ('arrow-left') {
+      <svg lucideArrowLeft class="h-5 w-5"></svg>
+    }
+    @case ('camera') {
+      <svg lucideCamera class="h-5 w-5"></svg>
+    }
+    @default {
+      <svg lucideCamera class="h-5 w-5"></svg>
+    }
+  }
+</button>
 
 <button (click)="toggleMode()" class="btn btn-circle">
   @if (themeService.isDarkMode()) {

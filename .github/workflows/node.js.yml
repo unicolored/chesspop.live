@@ -1,41 +1,44 @@
-name: Deploy to GitHub Pages
+name: CI
 
 on:
   push:
     branches:
-      - none
+      - main
+      - develop
+      - next
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
-  build-and-deploy:
-    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+  test:
     runs-on: ubuntu-latest
-    env:
-      FONTAWESOME_PACKAGE_TOKEN: ${{ secrets.FONTAWESOME_PACKAGE_TOKEN }}
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '24'
-      - run: |
-          corepack enable
-          corepack prepare yarn@stable --activate
-      - run: yarn install
-      # Step 4.5: Tests
-      - name: Prettier check
-        run: yarn check
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-      # Step 5: Build the Angular app
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm run check-format
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Test
+        run: pnpm run test
+
       - name: Build
-        run: yarn prod
-
-      # Step 6: Deploy to GitHub Pages
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist/app/browser
-          branch: gh-pages
+        run: pnpm run dist

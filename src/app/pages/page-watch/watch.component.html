@@ -1,0 +1,101 @@
+<div class="watch-layout">
+  <aside class="watch-sidebar">
+    <ng-container *ngTemplateOutlet="navigation" />
+  </aside>
+
+  <main class="watch-stage">
+    <button
+      class="watch-menu-toggle"
+      type="button"
+      aria-label="Open channels"
+      aria-haspopup="dialog"
+      aria-controls="watch-menu"
+      (click)="openMenu()">
+      <svg lucidePopcorn class="h-6 w-6"></svg>
+    </button>
+
+    <app-live-board [feed]="selectedFeed()">
+      <div board-overlay class="absolute top-2 right-2 z-10 flex items-center gap-2">
+        <button
+          type="button"
+          class="watch-channel inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full bg-gray-800/80 px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap text-gray-100 uppercase shadow-lg backdrop-blur hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          [attr.aria-label]="'Current channel ' + channelLabel() + '. Switch to ' + nextChannel().type + '.'"
+          [attr.title]="'Switch to ' + nextChannel().type"
+          (click)="cycleChannel()">
+          <ng-container *ngTemplateOutlet="channelIcon; context: { $implicit: channel().type }" />
+          <span aria-live="polite">{{ channelLabel() }}</span>
+        </button>
+        <app-theme-toggle />
+      </div>
+    </app-live-board>
+  </main>
+
+  <dialog
+    id="watch-menu"
+    #menu
+    class="watch-menu"
+    aria-label="Channels and pages"
+    (click)="onBackdropClick($event, menu)">
+    <div class="watch-menu-panel">
+      <button class="watch-menu-close" type="button" aria-label="Close menu" (click)="closeMenu()">
+        <svg lucideX class="h-5 w-5"></svg>
+      </button>
+
+      <ng-container *ngTemplateOutlet="navigation" />
+    </div>
+  </dialog>
+
+  <dialog
+    id="watch-help"
+    #help
+    class="watch-help"
+    aria-labelledby="watch-help-title"
+    (click)="onBackdropClick($event, help)">
+    <div class="watch-help-panel">
+      <h2 id="watch-help-title">How to watch</h2>
+      <app-help-content />
+      <button class="watch-help-hide" type="button" (click)="hideHelp()">Hide</button>
+    </div>
+  </dialog>
+</div>
+
+<ng-template #navigation>
+  <a class="watch-logo" routerLink="/">
+    <svg lucidePopcorn class="h-6 w-6"></svg>
+    ChessPop
+  </a>
+
+  <nav class="watch-channels" aria-label="Lichess channels">
+    <p class="watch-label">Lichess</p>
+    @for (liveFeed of liveService.liveList; track liveFeed.url) {
+      <button
+        type="button"
+        [class.active]="selectedFeed() === liveFeed.feed"
+        [attr.aria-current]="selectedFeed() === liveFeed.feed ? 'true' : null"
+        (click)="selectFeed(liveFeed.feed)">
+        <ng-container *ngTemplateOutlet="channelIcon; context: { $implicit: liveFeed.type }" />
+        {{ liveFeed.type }}
+      </button>
+    }
+  </nav>
+
+  <nav class="watch-pages" aria-label="Pages">
+    <p class="watch-label">Pages</p>
+    <button type="button" (click)="openHelp()">Help</button>
+    <a routerLink="/about">About</a>
+  </nav>
+</ng-template>
+
+<ng-template #channelIcon let-type>
+  @switch (type) {
+    @case ('bullet') {
+      <svg lucideRocket class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+    }
+    @case ('blitz') {
+      <svg lucideZap class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+    }
+    @case ('rapid') {
+      <svg lucideClock class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+    }
+  }
+</ng-template>

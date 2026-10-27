@@ -4,9 +4,8 @@
 
 set -e
 
-# npx prettier --check ./src
-
-pnpm run format
+pnpm run check-format
 pnpm run lint
+pnpm run test
 
 echo "✅ Tests completed"

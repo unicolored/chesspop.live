@@ -1,0 +1,9 @@
+@reference 'tailwindcss';
+
+.help-page {
+  @apply mx-auto max-w-2xl p-6 lg:p-12;
+
+  h1 {
+    @apply mb-4 text-3xl font-bold;
+  }
+}

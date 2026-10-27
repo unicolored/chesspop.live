@@ -1,0 +1,59 @@
+import { Injectable } from '@angular/core';
+
+import { type LiveFeed, type LiveFeedItem } from '../board/live.interface';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class LiveService {
+  defaultFeed: LiveFeedItem = {
+    feed: 'Lichess-bullet',
+    type: 'bullet',
+    url: 'https://lichess.org/api/tv/feed',
+    platform: 'Lichess',
+  };
+  readonly liveList: LiveFeedItem[] = [];
+
+  constructor() {
+    // this.liveList.push(this.defaultFeed);
+    // this.liveList.push({
+    //   feed: "Lichess-top",
+    //   type: "top",
+    //   url: "https://lichess.org/api/tv/feed",
+    //   platform: "Lichess",
+    // });
+    this.liveList.push({
+      feed: 'Lichess-bullet',
+      type: 'bullet',
+      url: 'https://lichess.org/api/tv/bullet/feed',
+      platform: 'Lichess',
+    });
+    this.liveList.push({
+      feed: 'Lichess-blitz',
+      type: 'blitz',
+      url: 'https://lichess.org/api/tv/blitz/feed',
+      platform: 'Lichess',
+    });
+    this.liveList.push({
+      feed: 'Lichess-rapid',
+      type: 'rapid',
+      url: 'https://lichess.org/api/tv/rapid/feed',
+      platform: 'Lichess',
+    });
+  }
+
+  getLiveFeedItem(selectedFeed: LiveFeed): LiveFeedItem {
+    return this.liveList.find(feed => feed.feed === selectedFeed) ?? this.defaultFeed;
+  }
+
+  /** Resolves a `?channel=` URL value (the speed) to its feed. */
+  getFeedByType(type: string | null): LiveFeedItem | null {
+    return this.liveList.find(feed => feed.type === type) ?? null;
+  }
+
+  /** Next feed in the channel list, wrapping around; unknown feeds start at the first one. */
+  getNextFeed(selectedFeed: LiveFeed): LiveFeedItem {
+    const index = this.liveList.findIndex(feed => feed.feed === selectedFeed);
+    return this.liveList[(index + 1) % this.liveList.length] ?? this.defaultFeed;
+  }
+}

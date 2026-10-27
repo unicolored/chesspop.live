@@ -1,0 +1,43 @@
+import { TestBed } from '@angular/core/testing';
+
+import { type LiveFeed } from '../board/live.interface';
+
+import { LiveService } from './live.service';
+
+describe('LiveService', () => {
+  let service: LiveService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(LiveService);
+  });
+
+  it('exposes the Lichess TV channels', () => {
+    expect(service.defaultFeed.feed).toBe('Lichess-bullet');
+    expect(service.liveList.map(feed => feed.type)).toEqual(['bullet', 'blitz', 'rapid']);
+  });
+
+  it('returns the requested feed', () => {
+    expect(service.getLiveFeedItem('Lichess-blitz').url).toBe('https://lichess.org/api/tv/blitz/feed');
+  });
+
+  it('falls back to the default feed for unknown channels', () => {
+    expect(service.getLiveFeedItem('nope' as LiveFeed)).toBe(service.defaultFeed);
+  });
+
+  it('resolves a channel from its URL value', () => {
+    expect(service.getFeedByType('rapid')?.feed).toBe('Lichess-rapid');
+    expect(service.getFeedByType('nope')).toBeNull();
+    expect(service.getFeedByType(null)).toBeNull();
+  });
+
+  it('cycles to the next channel, wrapping around', () => {
+    expect(service.getNextFeed('Lichess-bullet').feed).toBe('Lichess-blitz');
+    expect(service.getNextFeed('Lichess-blitz').feed).toBe('Lichess-rapid');
+    expect(service.getNextFeed('Lichess-rapid').feed).toBe('Lichess-bullet');
+  });
+
+  it('starts at the first channel for an unknown feed', () => {
+    expect(service.getNextFeed('nope' as LiveFeed).feed).toBe('Lichess-bullet');
+  });
+});
