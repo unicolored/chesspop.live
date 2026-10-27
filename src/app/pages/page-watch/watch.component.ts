@@ -47,10 +47,9 @@ export class WatchComponent implements AfterViewInit {
   private router = inject(Router);
 
   selectedFeed = signal<LiveFeed>(this.feedFromUrl() ?? this.liveService.defaultFeed.feed);
-  readonly channelLabel = computed(() => {
-    const item = this.liveService.getLiveFeedItem(this.selectedFeed());
-    return `${item.platform} · ${item.type}`;
-  });
+  readonly channel = computed(() => this.liveService.getLiveFeedItem(this.selectedFeed()));
+  readonly nextChannel = computed(() => this.liveService.getNextFeed(this.selectedFeed()));
+  readonly channelLabel = computed(() => `${this.channel().platform} · ${this.channel().type}`);
 
   private menu = viewChild.required<ElementRef<HTMLDialogElement>>('menu');
   private help = viewChild.required<ElementRef<HTMLDialogElement>>('help');
@@ -108,6 +107,10 @@ export class WatchComponent implements AfterViewInit {
     if (this.menu().nativeElement.open) {
       this.closeMenu();
     }
+  }
+
+  cycleChannel(): void {
+    this.selectFeed(this.nextChannel().feed);
   }
 
   onBackdropClick(event: MouseEvent, dialog: HTMLDialogElement): void {

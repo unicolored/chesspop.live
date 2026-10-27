@@ -18,6 +18,7 @@ describe('HelpContentComponent', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
     expect(text).toContain('Pick a channel to jump straight into a live game.');
+    expect(text).toContain('Click the channel badge to switch: bullet → blitz → rapid.');
     expect(text).toContain('Middle-button drag');
     expect(text).toContain('Scroll');
     expect(text).toContain('Right-click a square');

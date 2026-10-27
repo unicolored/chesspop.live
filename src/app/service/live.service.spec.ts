@@ -30,4 +30,14 @@ describe('LiveService', () => {
     expect(service.getFeedByType('nope')).toBeNull();
     expect(service.getFeedByType(null)).toBeNull();
   });
+
+  it('cycles to the next channel, wrapping around', () => {
+    expect(service.getNextFeed('Lichess-bullet').feed).toBe('Lichess-blitz');
+    expect(service.getNextFeed('Lichess-blitz').feed).toBe('Lichess-rapid');
+    expect(service.getNextFeed('Lichess-rapid').feed).toBe('Lichess-bullet');
+  });
+
+  it('starts at the first channel for an unknown feed', () => {
+    expect(service.getNextFeed('nope' as LiveFeed).feed).toBe('Lichess-bullet');
+  });
 });

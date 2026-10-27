@@ -80,6 +80,10 @@ describe('WatchComponent', () => {
     return Array.from(scope.querySelectorAll('.watch-channels button'));
   }
 
+  function channelBadge(): HTMLButtonElement {
+    return fixture.nativeElement.querySelector('.watch-channel') as HTMLButtonElement;
+  }
+
   function pageButtons(scope: ParentNode): HTMLButtonElement[] {
     return Array.from(scope.querySelectorAll('.watch-pages button'));
   }
@@ -178,15 +182,43 @@ describe('WatchComponent', () => {
     expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-bullet');
   });
 
-  it('shows the current channel next to the theme toggle', () => {
-    const label = fixture.nativeElement.querySelector('.watch-channel') as HTMLElement;
+  it('shows the current channel and its icon next to the theme toggle', () => {
+    const badge = channelBadge();
 
-    expect(label.textContent?.trim()).toBe('Lichess · bullet');
+    expect(badge.tagName).toBe('BUTTON');
+    expect(badge.textContent?.trim()).toBe('Lichess · bullet');
+    expect(badge.querySelector('.lucide-rocket')).not.toBeNull();
+    expect(badge.getAttribute('aria-label')).toContain('Switch to blitz');
+  });
 
-    fixture.componentInstance.selectFeed('Lichess-blitz');
+  it('cycles channels when the badge is clicked', () => {
+    const badge = channelBadge();
+
+    badge.click();
     fixture.detectChanges();
 
-    expect(label.textContent?.trim()).toBe('Lichess · blitz');
+    expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-blitz');
+    expect(badge.textContent?.trim()).toBe('Lichess · blitz');
+    expect(badge.querySelector('.lucide-zap')).not.toBeNull();
+    expect(router.navigate).toHaveBeenCalledWith(
+      [],
+      jasmine.objectContaining({ queryParams: { channel: 'blitz' } }),
+    );
+
+    badge.click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-rapid');
+    expect(badge.textContent?.trim()).toBe('Lichess · rapid');
+    expect(badge.querySelector('.lucide-clock')).not.toBeNull();
+
+    badge.click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-bullet');
+    expect(badge.querySelector('.lucide-rocket')).not.toBeNull();
+    expect(stubBoard().feed()).toBe('Lichess-bullet');
+    expect(router.navigate).toHaveBeenCalledTimes(3);
   });
 
   it('opens the menu from the popcorn trigger', () => {

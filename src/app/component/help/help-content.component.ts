@@ -6,6 +6,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   host: { class: 'block' },
   template: `
     <p>Pick a channel to jump straight into a live game.</p>
+    <p>Click the channel badge to switch: bullet → blitz → rapid.</p>
 
     <h3 class="mt-4 mb-2 text-xs font-semibold tracking-wider uppercase opacity-70">Mouse</h3>
     <ul class="list-disc space-y-1 pl-5">

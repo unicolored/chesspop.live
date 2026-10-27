@@ -16,11 +16,15 @@
 
     <app-live-board [feed]="selectedFeed()">
       <div board-overlay class="absolute top-2 right-2 z-10 flex items-center gap-2">
-        <span
-          class="watch-channel rounded-full bg-gray-800/80 px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap text-gray-100 uppercase shadow-lg backdrop-blur"
-          aria-live="polite"
-          >{{ channelLabel() }}</span
-        >
+        <button
+          type="button"
+          class="watch-channel inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full bg-gray-800/80 px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap text-gray-100 uppercase shadow-lg backdrop-blur hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          [attr.aria-label]="'Current channel ' + channelLabel() + '. Switch to ' + nextChannel().type + '.'"
+          [attr.title]="'Switch to ' + nextChannel().type"
+          (click)="cycleChannel()">
+          <ng-container *ngTemplateOutlet="channelIcon; context: { $implicit: channel().type }" />
+          <span aria-live="polite">{{ channelLabel() }}</span>
+        </button>
         <app-theme-toggle />
       </div>
     </app-live-board>
@@ -69,17 +73,7 @@
         [class.active]="selectedFeed() === liveFeed.feed"
         [attr.aria-current]="selectedFeed() === liveFeed.feed ? 'true' : null"
         (click)="selectFeed(liveFeed.feed)">
-        @switch (liveFeed.type) {
-          @case ('bullet') {
-            <svg lucideRocket class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
-          }
-          @case ('blitz') {
-            <svg lucideZap class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
-          }
-          @case ('rapid') {
-            <svg lucideClock class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
-          }
-        }
+        <ng-container *ngTemplateOutlet="channelIcon; context: { $implicit: liveFeed.type }" />
         {{ liveFeed.type }}
       </button>
     }
@@ -90,4 +84,18 @@
     <button type="button" (click)="openHelp()">Help</button>
     <a routerLink="/about">About</a>
   </nav>
+</ng-template>
+
+<ng-template #channelIcon let-type>
+  @switch (type) {
+    @case ('bullet') {
+      <svg lucideRocket class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+    }
+    @case ('blitz') {
+      <svg lucideZap class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+    }
+    @case ('rapid') {
+      <svg lucideClock class="h-4 w-4 shrink-0" aria-hidden="true"></svg>
+    }
+  }
 </ng-template>

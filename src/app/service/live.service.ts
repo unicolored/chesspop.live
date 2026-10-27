@@ -50,4 +50,10 @@ export class LiveService {
   getFeedByType(type: string | null): LiveFeedItem | null {
     return this.liveList.find(feed => feed.type === type) ?? null;
   }
+
+  /** Next feed in the channel list, wrapping around; unknown feeds start at the first one. */
+  getNextFeed(selectedFeed: LiveFeed): LiveFeedItem {
+    const index = this.liveList.findIndex(feed => feed.feed === selectedFeed);
+    return this.liveList[(index + 1) % this.liveList.length] ?? this.defaultFeed;
+  }
 }
