@@ -98,16 +98,17 @@
 # [ci]
 # platform = "github"  # or "gitlab"
 [pre-commit]
-format = "yarn check"
+format = "pnpm run check-format"
 
 [pre-merge]
-format = "yarn format"
-test = "yarn test"
+format = "pnpm run format"
+lint = "pnpm run lint"
+test = "pnpm run test"
 build = "mise run build"
 
 [post-start]
-server = "ng serve --port {{ branch | hash_port }}"
+server = "pnpm run dev"
 
 [post-create]
-deps = "yarn install"
+deps = "pnpm install"
 
