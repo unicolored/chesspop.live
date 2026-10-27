@@ -44,13 +44,13 @@
   </a>
 
   <nav class="watch-channels" aria-label="Lichess channels">
-    <p class="watch-label">Channels</p>
+    <p class="watch-label">Lichess</p>
     @for (liveFeed of liveService.liveList; track liveFeed.url) {
       <button
         type="button"
         [class.active]="selectedFeed() === liveFeed.feed"
         (click)="selectFeed(liveFeed.feed)">
-        {{ liveFeed.platform }} - {{ liveFeed.type }}
+        {{ liveFeed.type }}
       </button>
     }
   </nav>
