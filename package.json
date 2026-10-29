@@ -24,7 +24,7 @@
     "@angular/router": "^22.2.3",
     "@angular/ssr": "^22.2.4",
     "@lichess-org/chessground": "^10.5.0",
-    "@lucide/angular": "^1.61.0",
+    "@lucide/angular": "^1.62.0",
     "chess.js": "^1.4.0",
     "chessfield": "^2.5.2",
     "express": "^4.22.3",
@@ -50,10 +50,10 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
-    "postcss": "^8.5.31",
+    "postcss": "^8.5.32",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
-    "wrangler": "^4.153.0"
+    "wrangler": "^4.154.0"
   },
   "packageManager": "pnpm@12.15.0"
 }
