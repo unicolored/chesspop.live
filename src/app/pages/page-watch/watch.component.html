@@ -23,7 +23,7 @@
           [attr.title]="'Switch to ' + nextChannel().type"
           (click)="cycleChannel()">
           <ng-container *ngTemplateOutlet="channelIcon; context: { $implicit: channel().type }" />
-          <span aria-live="polite">{{ channelLabel() }}</span>
+          <span aria-live="polite">{{ channel().type }}</span>
         </button>
         <app-theme-toggle />
       </div>
