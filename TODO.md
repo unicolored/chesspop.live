@@ -1,3 +1,1 @@
-- The Lichess feed stream returns the timeleft for each user. When the integer value equal to 0, the setState to gameOver must be trigger via the chessfield api to indicate the winner and the state 'timeout'.
-- One must find a way to trigger setState to gameover 'resign'. The Lichess feed stream seems to not indicate when a player resign. One must solve that.
-- On both mobile and desktop: display the players names as it was before below the chessboard canvas.
+- Nothing to do.
