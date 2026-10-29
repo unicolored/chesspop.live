@@ -186,8 +186,9 @@ describe('WatchComponent', () => {
     const badge = channelBadge();
 
     expect(badge.tagName).toBe('BUTTON');
-    expect(badge.textContent?.trim()).toBe('Lichess · bullet');
+    expect(badge.textContent?.trim()).toBe('bullet');
     expect(badge.querySelector('.lucide-rocket')).not.toBeNull();
+    expect(badge.getAttribute('aria-label')).toContain('Current channel Lichess bullet');
     expect(badge.getAttribute('aria-label')).toContain('Switch to blitz');
   });
 
@@ -198,7 +199,7 @@ describe('WatchComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-blitz');
-    expect(badge.textContent?.trim()).toBe('Lichess · blitz');
+    expect(badge.textContent?.trim()).toBe('blitz');
     expect(badge.querySelector('.lucide-zap')).not.toBeNull();
     expect(router.navigate).toHaveBeenCalledWith(
       [],
@@ -209,7 +210,7 @@ describe('WatchComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.selectedFeed()).toBe('Lichess-rapid');
-    expect(badge.textContent?.trim()).toBe('Lichess · rapid');
+    expect(badge.textContent?.trim()).toBe('rapid');
     expect(badge.querySelector('.lucide-clock')).not.toBeNull();
 
     badge.click();

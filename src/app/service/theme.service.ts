@@ -35,6 +35,9 @@ export class ThemeService {
       if (isBrowser) {
         localStorage.setItem('darkMode', darkMode ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+        document
+          .querySelector('meta[name="theme-color"]')
+          ?.setAttribute('content', darkMode ? '#1d232a' : '#ffffff');
       }
     });
   }

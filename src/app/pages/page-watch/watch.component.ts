@@ -49,7 +49,8 @@ export class WatchComponent implements AfterViewInit {
   selectedFeed = signal<LiveFeed>(this.feedFromUrl() ?? this.liveService.defaultFeed.feed);
   readonly channel = computed(() => this.liveService.getLiveFeedItem(this.selectedFeed()));
   readonly nextChannel = computed(() => this.liveService.getNextFeed(this.selectedFeed()));
-  readonly channelLabel = computed(() => `${this.channel().platform} · ${this.channel().type}`);
+  /** Accessible name of the channel badge; its visible text is just the speed. */
+  readonly channelLabel = computed(() => `${this.channel().platform} ${this.channel().type}`);
 
   private menu = viewChild.required<ElementRef<HTMLDialogElement>>('menu');
   private help = viewChild.required<ElementRef<HTMLDialogElement>>('help');
