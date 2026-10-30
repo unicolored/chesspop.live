@@ -16,12 +16,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import type * as cg from '@lichess-org/chessground/types';
+import { LucideChessKing } from '@lucide/angular';
 import { BLACK, Chess, KING, WHITE } from 'chess.js';
 import { Chessfield, type GameState } from 'chessfield';
 import { EMPTY, fromEvent, type Observable, startWith, type Subscription, switchMap, tap } from 'rxjs';
 
 import { CHESSPOP_THEME, CHESSPOP_THEME_NAME } from '../../board/chessfield-themes';
-import { type LichessStreamData } from '../../board/lichess.interface';
+import { type LichessStreamData, type Player } from '../../board/lichess.interface';
 import { type LichessTvFeed, type LiveFeed } from '../../board/live.interface';
 import { AudioService } from '../../service/audio.service';
 import { ChessfieldService } from '../../service/chessfield.service';
@@ -34,6 +35,7 @@ import { ThemeService } from '../../service/theme.service';
   selector: 'app-live-board',
   templateUrl: './live-board.component.html',
   styleUrls: ['./live-board.component.css'],
+  imports: [LucideChessKing],
   changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
@@ -43,6 +45,15 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
 
   /** Connection state of the current feed, surfaced as an overlay on the board. */
   readonly status = signal<'connecting' | 'live' | 'error'>('connecting');
+
+  /** Players of the featured game, listed below the board in white-then-black order. */
+  readonly players = signal<Player[]>([]);
+  readonly orderedPlayers = computed(() => {
+    const players = this.players();
+    const white = players.find(player => player.color === 'white');
+    const black = players.find(player => player.color === 'black');
+    return [white, black].filter((player): player is Player => player !== undefined);
+  });
 
   chessfield!: Chessfield;
   platformID = inject(PLATFORM_ID);
@@ -94,8 +105,22 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
     this.loadChannel();
   }
 
+  /** Rotate the board to the clicked player's side, as the old players list did. */
+  focusPlayer(color: string): void {
+    if (color === 'white' || color === 'black') {
+      this.chessfieldService.switchCamera(color);
+    }
+  }
+
+  /** Title and name of a player, e.g. "GM Alice". */
+  playerLabel(player: Player): string {
+    const title = player.user.title ? `${player.user.title} ` : '';
+    return `${title}${player.user.name ?? '<pop>'}`;
+  }
+
   private loadChannel(): void {
     this.resetFeed();
+    this.players.set([]);
     this.status.set('connecting');
 
     if (!isPlatformBrowser(this.platformID)) {
@@ -274,17 +299,17 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const playerName = (color: 'white' | 'black'): string => {
+    const label = (color: 'white' | 'black'): string => {
       const player = players.find(p => p.color === color);
-      if (!player) {
-        return '<pop>';
-      }
-      const title = player.user.title ? `${player.user.title} ` : '';
-      return `${title}${player.user.name ?? '<pop>'}`;
+      return player ? this.playerLabel(player) : '<pop>';
     };
 
+    // DOM names update immediately; the canvas labels follow once the scene has
+    // rebuilt them.
+    this.players.set(players);
+
     await this.chessfield?.configUpdate({
-      playerNames: { white: playerName('white'), black: playerName('black') },
+      playerNames: { white: label('white'), black: label('black') },
     });
 
     this.status.set('live');

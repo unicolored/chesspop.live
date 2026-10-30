@@ -17,3 +17,9 @@
 
 /*.svg
   Cache-Control: public, max-age=31536000, immutable
+
+# App icons are referenced from the manifest by stable URLs, so a regenerated
+# icon must not stay cached for a year.
+/popcorn-favicon/*
+  ! Cache-Control
+  Cache-Control: public, max-age=3600, must-revalidate
