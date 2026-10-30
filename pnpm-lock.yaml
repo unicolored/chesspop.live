@@ -198,7 +198,7 @@ importers:
         version: 1.4.0
       chessfield:
         specifier: ^2.5.2
-        version: 2.5.2(@lichess-org/chessground@10.5.0)(three@0.186.1)
+        version: 2.5.3(@lichess-org/chessground@10.5.0)(three@0.186.1)
       express:
         specifier: ^4.22.3
         version: 4.22.3(supports-color@10.2.2)
@@ -2173,8 +2173,8 @@ packages:
   chess.js@1.4.0:
     resolution: {integrity: sha512-BBJgrrtKQOzFLonR0l+k64A98NLemPwNsCskwb+29bRwobUa4iTm51E1kwGPbWXAcfdDa18nad6vpPPKPWarqw==}
 
-  chessfield@2.5.2:
-    resolution: {integrity: sha512-/atfNaYLlVj320X5KBkKUu3xdWMALpcTEAsG+Q8XQyevEHp/vvwX2UBJQtNOxY0s614wPyfdXzk5ellRkueMQQ==}
+  chessfield@2.5.3:
+    resolution: {integrity: sha512-nxfI7079bXb4zDvTBl4HhNvl83tsOyN/x8q140ezCyzKSt/kc2nNnyqN1mjzSV0g0aucRniDLMilPap6FqO4wA==}
     engines: {node: '>=24', pnpm: '>=12'}
     peerDependencies:
       '@lichess-org/chessground': '>=10.4.0'
@@ -5237,7 +5237,7 @@ snapshots:
 
   chess.js@1.4.0: {}
 
-  chessfield@2.5.2(@lichess-org/chessground@10.5.0)(three@0.186.1):
+  chessfield@2.5.3(@lichess-org/chessground@10.5.0)(three@0.186.1):
     dependencies:
       '@chess-fu/fen-parser': 1.1.4
       '@lichess-org/chessground': 10.5.0
