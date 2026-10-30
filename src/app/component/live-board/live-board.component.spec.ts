@@ -104,6 +104,44 @@ describe('LiveBoardComponent', () => {
     expect(playSound).not.toHaveBeenCalled();
     expect(component.status()).toBe('live');
     expect(fixture.nativeElement.querySelector('.cf-status')).toBeNull();
+
+    const rows = Array.from(fixture.nativeElement.querySelectorAll('.cf-player')) as HTMLElement[];
+    expect(rows.length).toBe(2);
+    expect(rows[0].classList).toContain('is-white');
+    expect(rows[0].textContent).toContain('GM');
+    expect(rows[0].textContent).toContain('Alice');
+    expect(rows[0].textContent).toContain('2800');
+    expect(rows[1].classList).toContain('is-black');
+    expect(rows[1].textContent).toContain('Bob');
+    expect(rows[1].textContent).toContain('2700');
+  });
+
+  it('drops the player names when the channel changes', async () => {
+    component.chessfield = fakeChessfield();
+
+    stream.next(featured(START_FEN));
+    await settle();
+    fixture.detectChanges();
+
+    fixture.componentRef.setInput('feed', 'Lichess-blitz');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.cf-players')).toBeNull();
+    expect(component.orderedPlayers()).toEqual([]);
+  });
+
+  it('switches the camera when a player is clicked', async () => {
+    component.chessfield = fakeChessfield();
+    const switchCamera = spyOn(component.chessfieldService, 'switchCamera');
+
+    stream.next(featured(START_FEN));
+    await settle();
+    fixture.detectChanges();
+
+    const rows = Array.from(fixture.nativeElement.querySelectorAll('.cf-player')) as HTMLButtonElement[];
+    rows[1].click();
+
+    expect(switchCamera).toHaveBeenCalledWith('black');
   });
 
   it('applies a FEN to the board', () => {

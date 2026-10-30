@@ -27,6 +27,22 @@ describe('ThemeService', () => {
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
   });
 
+  it('should sync the browser theme color with the mode', () => {
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    document.head.append(meta);
+
+    service.setDarkMode(true);
+    TestBed.tick();
+    expect(meta.content).toBe('#1d232a');
+
+    service.setDarkMode(false);
+    TestBed.tick();
+    expect(meta.content).toBe('#ffffff');
+
+    meta.remove();
+  });
+
   it('toggles sounds through the audio service', () => {
     const audioService = TestBed.inject(AudioService);
     spyOn(audioService, 'initSounds');

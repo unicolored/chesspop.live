@@ -1,18 +1,43 @@
-<div class="chessfield-wrap" #chessfield>
-  <ng-content select="[board-overlay]" />
+<div class="cf-stage">
+  <div class="chessfield-wrap" #chessfield>
+    <ng-content select="[board-overlay]" />
 
-  @switch (status()) {
-    @case ('connecting') {
-      <div class="cf-status" role="status" aria-live="polite">
-        <span class="cf-spinner" aria-hidden="true"></span>
-        <span>Connecting to {{ channelLabel() }}…</span>
-      </div>
+    @switch (status()) {
+      @case ('connecting') {
+        <div class="cf-status" role="status" aria-live="polite">
+          <span class="cf-spinner" aria-hidden="true"></span>
+          <span>Connecting to {{ channelLabel() }}…</span>
+        </div>
+      }
+      @case ('error') {
+        <div class="cf-status cf-status-error" role="alert">
+          <span>Couldn't reach {{ channelLabel() }}.</span>
+          <button type="button" class="cf-retry" (click)="retry()">Retry</button>
+        </div>
+      }
     }
-    @case ('error') {
-      <div class="cf-status cf-status-error" role="alert">
-        <span>Couldn't reach {{ channelLabel() }}.</span>
-        <button type="button" class="cf-retry" (click)="retry()">Retry</button>
-      </div>
-    }
+  </div>
+
+  @if (orderedPlayers().length) {
+    <div class="cf-players">
+      @for (player of orderedPlayers(); track player.color) {
+        <button
+          type="button"
+          class="cf-player"
+          [class.is-white]="player.color === 'white'"
+          [class.is-black]="player.color === 'black'"
+          [attr.aria-label]="'Show the board from ' + player.color + '’s side: ' + playerLabel(player)"
+          (click)="focusPlayer(player.color)">
+          <span class="cf-player-badge" aria-hidden="true">
+            <svg lucideChessKing></svg>
+          </span>
+          @if (player.user.title) {
+            <span class="cf-player-title">{{ player.user.title }}</span>
+          }
+          <span class="cf-player-name">{{ player.user.name }}</span>
+          <span class="cf-player-rating">{{ player.rating }}</span>
+        </button>
+      }
+    </div>
   }
 </div>
