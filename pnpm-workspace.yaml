@@ -46,5 +46,3 @@ minimumReleaseAgeExclude:
   - '@oxlint/binding-win32-x64-msvc@1.90.0'
   - oxfmt@0.75.0
   - oxlint@1.90.0
-overrides:
-  chessfield: link:../../../../Projects/OPEN/chessfield
