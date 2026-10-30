@@ -18,7 +18,7 @@ import {
 import type * as cg from '@lichess-org/chessground/types';
 import { LucideChessKing } from '@lucide/angular';
 import { BLACK, Chess, KING, WHITE } from 'chess.js';
-import { Chessfield, type GameState } from 'chessfield';
+import { Chessfield, type GameState, type TimeLeft } from 'chessfield';
 import { EMPTY, fromEvent, type Observable, startWith, type Subscription, switchMap, tap } from 'rxjs';
 
 import { CHESSPOP_THEME, CHESSPOP_THEME_NAME } from '../../board/chessfield-themes';
@@ -179,7 +179,7 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
     }
 
     this.audioService.playSound(133, 'sine', 0.1);
-    this.chessfield.setFen(data.fen, lastMove);
+    this.chessfield.setFen(data.fen, lastMove, this.timeLeftOf(data));
     this.status.set('live');
 
     if (chess.isGameOver()) {
@@ -189,6 +189,16 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
     } else if (data.wc === 0 || data.bc === 0) {
       this.applyTimeout(chess, data);
     }
+  }
+
+  /**
+   * Lichess reports both clocks in whole seconds on every move; a one-sided
+   * snapshot cannot anchor the countdown, so it is dropped.
+   */
+  private timeLeftOf(data: LichessStreamData): TimeLeft | undefined {
+    const { wc, bc } = data;
+
+    return wc !== undefined && bc !== undefined ? { white: wc, black: bc } : undefined;
   }
 
   private applyGameOver(chess: Chess): void {
