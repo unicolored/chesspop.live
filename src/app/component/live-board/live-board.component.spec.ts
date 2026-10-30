@@ -151,10 +151,28 @@ describe('LiveBoardComponent', () => {
 
     stream.next({ t: 'fen', d: { fen: START_FEN } });
 
-    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, undefined);
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, undefined, undefined);
     expect(chessfield.setState).not.toHaveBeenCalled();
     expect(playSound).toHaveBeenCalled();
     expect(component.status()).toBe('live');
+  });
+
+  it('sends the remaining clocks with the position', () => {
+    const chessfield = fakeChessfield();
+    component.chessfield = chessfield;
+
+    stream.next({ t: 'fen', d: { fen: START_FEN, lm: 'e2e4', wc: 42, bc: 7 } });
+
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, ['e2', 'e4'], { white: 42, black: 7 });
+  });
+
+  it('drops a one-sided clock', () => {
+    const chessfield = fakeChessfield();
+    component.chessfield = chessfield;
+
+    stream.next({ t: 'fen', d: { fen: START_FEN, wc: 42 } });
+
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, undefined, undefined);
   });
 
   it('offers a retry when the stream fails', () => {
