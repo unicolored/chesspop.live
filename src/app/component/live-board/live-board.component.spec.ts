@@ -23,14 +23,19 @@ describe('LiveBoardComponent', () => {
     return new Promise(resolve => setTimeout(resolve));
   }
 
-  function featured(fen: string): LichessTvFeed {
+  function featured(fen: string, seconds?: { white: number; black: number }): LichessTvFeed {
     return {
       t: 'featured',
       d: {
         fen,
         players: [
-          { user: { id: 'white-id', name: 'Alice', title: 'GM' }, color: 'white', rating: 2800 },
-          { user: { id: 'black-id', name: 'Bob' }, color: 'black', rating: 2700 },
+          {
+            user: { id: 'white-id', name: 'Alice', title: 'GM' },
+            color: 'white',
+            rating: 2800,
+            seconds: seconds?.white,
+          },
+          { user: { id: 'black-id', name: 'Bob' }, color: 'black', rating: 2700, seconds: seconds?.black },
         ],
       },
     };
@@ -96,7 +101,7 @@ describe('LiveBoardComponent', () => {
     await settle();
     fixture.detectChanges();
 
-    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN);
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, undefined, undefined);
     expect(chessfield.setState).toHaveBeenCalledWith({});
     expect(chessfield.configUpdate).toHaveBeenCalledWith({
       playerNames: { white: 'GM Alice', black: 'Bob' },
@@ -114,6 +119,26 @@ describe('LiveBoardComponent', () => {
     expect(rows[1].classList).toContain('is-black');
     expect(rows[1].textContent).toContain('Bob');
     expect(rows[1].textContent).toContain('2700');
+  });
+
+  it('sends the featured clocks with the position', async () => {
+    const chessfield = fakeChessfield();
+    component.chessfield = chessfield;
+
+    stream.next(featured(START_FEN, { white: 300, black: 280 }));
+    await settle();
+
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, undefined, { white: 300, black: 280 });
+  });
+
+  it('drops featured clocks when a player has no remaining time', async () => {
+    const chessfield = fakeChessfield();
+    component.chessfield = chessfield;
+
+    stream.next(featured(START_FEN));
+    await settle();
+
+    expect(chessfield.setFen).toHaveBeenCalledWith(START_FEN, undefined, undefined);
   });
 
   it('drops the player names when the channel changes', async () => {
@@ -215,6 +240,17 @@ describe('LiveBoardComponent', () => {
 
     expect(chessfield.setState).toHaveBeenCalledWith(
       jasmine.objectContaining({ status: 'timeout', winner: 'b' }),
+    );
+  });
+
+  it('reports a timeout while the flagged side is in check', () => {
+    const chessfield = fakeChessfield();
+    component.chessfield = chessfield;
+
+    stream.next({ t: 'fen', d: { fen: '4k3/8/8/8/8/8/8/4R2K b - - 0 1', wc: 300, bc: 0 } });
+
+    expect(chessfield.setState).toHaveBeenCalledWith(
+      jasmine.objectContaining({ status: 'timeout', winner: 'w' }),
     );
   });
 });

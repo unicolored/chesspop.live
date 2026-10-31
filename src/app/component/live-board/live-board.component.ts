@@ -184,10 +184,10 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
 
     if (chess.isGameOver()) {
       this.applyGameOver(chess);
-    } else if (chess.isCheck()) {
-      this.applyCheck(chess);
     } else if (data.wc === 0 || data.bc === 0) {
       this.applyTimeout(chess, data);
+    } else if (chess.isCheck()) {
+      this.applyCheck(chess);
     }
   }
 
@@ -199,6 +199,14 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
     const { wc, bc } = data;
 
     return wc !== undefined && bc !== undefined ? { white: wc, black: bc } : undefined;
+  }
+
+  /** The `featured` event carries each player's remaining seconds instead of wc/bc. */
+  private timeLeftOfPlayers(players: Player[]): TimeLeft | undefined {
+    const white = players.find(player => player.color === 'white')?.seconds;
+    const black = players.find(player => player.color === 'black')?.seconds;
+
+    return white !== undefined && black !== undefined ? { white, black } : undefined;
   }
 
   private applyGameOver(chess: Chess): void {
@@ -298,12 +306,13 @@ export class LiveBoardComponent implements OnInit, OnDestroy {
   private async applyFeatured(data: LichessStreamData): Promise<void> {
     // `featured` carries the current position: show it right away instead of
     // keeping the previous channel's game until the next move arrives.
+    const players = data.players;
+
     if (data.fen && this.chessfield) {
-      this.chessfield.setFen(data.fen);
+      this.chessfield.setFen(data.fen, undefined, players ? this.timeLeftOfPlayers(players) : undefined);
       this.chessfield.setState({});
     }
 
-    const players = data.players;
     if (!players) {
       this.status.set('live');
       return;
