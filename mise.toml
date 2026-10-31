@@ -1,5 +1,6 @@
 [tools]
-node = "24.19.0"
+node = "24"
+pnpm = "12.3.4"
 "npm:@angular/cli" = "22"
 
 [tasks.build]
@@ -12,3 +13,23 @@ run = [
 [tasks.deploy]
 description = "Deploy the app"
 run = "wrangler pages deploy"
+
+[env]
+CODE_WORK_BRANCH = "next"
+CODE_UPSTREAM_BRANCH = "main"
+RELEASE_VERSION = "2.2.0"
+
+[tasks.install]
+run = "pnpm install"
+
+[tasks.release-checks]
+depends = ["install"]
+run = ["pnpm run check-format", "pnpm run lint", "pnpm run test"]
+
+[tasks.format]
+run = ["pnpm run lint:fix", "pnpm run format"]
+
+[tasks.dev]
+run = ["pnpm run dev"]
+
+
