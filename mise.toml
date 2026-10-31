@@ -17,7 +17,7 @@ run = "wrangler pages deploy"
 [env]
 CODE_WORK_BRANCH = "next"
 CODE_UPSTREAM_BRANCH = "main"
-RELEASE_VERSION = "2.1.0"
+RELEASE_VERSION = "2.2.0"
 
 [tasks.install]
 run = "pnpm install"
