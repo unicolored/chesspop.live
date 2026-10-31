@@ -31,6 +31,8 @@ export interface Player {
   };
   color: string;
   rating: number;
+  /** Remaining clock time in seconds, sent by the `featured` event only. */
+  seconds?: number;
 }
 
 export interface Players {
