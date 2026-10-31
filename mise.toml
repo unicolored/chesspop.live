@@ -15,8 +15,8 @@ description = "Deploy the app"
 run = "wrangler pages deploy"
 
 [env]
-CODE_WORK_BRANCH = "develop"
-CODE_UPSTREAM_BRANCH = "next"
+CODE_WORK_BRANCH = "next"
+CODE_UPSTREAM_BRANCH = "main"
 RELEASE_VERSION = "2.1.0"
 
 [tasks.install]
